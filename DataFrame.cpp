@@ -1,6 +1,9 @@
 #include "DataFrame.h"
-#include <cstdlib>
-DataFrame::DataFrame(char* address, char delimiter) {
+#include "list.h"
+
+DataFrame::DataFrame(const char *address, char delimiter) {
+	row = new list<double*>();
+
 	ifstream datafile(address);
 	string line;
 
@@ -8,14 +11,13 @@ DataFrame::DataFrame(char* address, char delimiter) {
 		getline(datafile, line);
 		//https://stackoverflow.com/questions/3867890/count-character-occurrences-in-a-string
 		ncol = count(line.begin(), line.end(), delimiter) + 1;
-		colTitle = splitString(line,delimiter);
+		colTitle = splitString(line, delimiter);
 
 		while (getline(datafile, line)) {
-			double *x = splitNum(line,delimiter);
-			cout<<"hey";
-			row->push_back(x);
+			row->push_back(splitNum(line, delimiter));
 		}
 		datafile.close();
+
 	}
 
 }
@@ -27,7 +29,6 @@ DataFrame::~DataFrame() {
 }
 //https://stackoverflow.com/questions/1894886/parsing-a-comma-delimited-stdstring
 string* DataFrame::splitString(string str, char delimiter) {
-	cout << "split string" << endl;
 	stringstream ss(str);
 	string* result = new string[ncol];
 
@@ -49,15 +50,50 @@ double* DataFrame::splitNum(string str, char delimiter) {
 
 		getline(ss, substr, delimiter);
 
-		//result[i] = stod(substr.c_str());
-		result[i] = strtod(substr.c_str(),NULL);
+		result[i] = stod(substr.c_str());
+		//result[i] = strtod(substr.c_str(),NULL);
 		i++;
 	}
+
 	return result;
 }
-void DataFrame::disp(){
-	for (int i = 0; i<ncol;i++){
-		cout << colTitle[i] << endl;
+void DataFrame::sort(int col) {
+	quicksort(row,0,row->size()-1,col);
+}
+//ripped straight off Lomuto partition scheme https://en.wikipedia.org/wiki/Quicksort
+void DataFrame::quicksort(list<double*>*L,int lo,int hi,int col){
+	if (lo < hi){
+		int p = partition(L,lo,hi,col);
+		quicksort(L,lo,p-1,col);
+		quicksort(L, p+1,hi,col);
+	}
+}
+int DataFrame::partition(list<double*>*L,int lo,int hi,int col){
+	double* pivot = L->valAt(hi);
+	int i = lo;
+	for (int j = lo; j<hi -1;j++){
+		if (L->valAt(j)[col] < pivot[col]){
+			L->swap(i,j);
+			i++;
+		}
+	}
+	L->swap(i,hi);
+	return i;
+}
+
+void DataFrame::disp() {
+	//cout << "Columns: " << ncol << endl;
+	//cout << "Rows: " << row->size() << endl;
+
+	for (int i = 0; i < ncol; i++) {
+		cout << colTitle[i] << '\t';
+	}
+	cout << endl;
+	for (int i = 0; i < row->size(); i++) {
+		for (int j = 0; j < ncol; j++) {
+			cout << row->valAt(i)[j] << '\t';
+		}
+		cout << endl;
 	}
 }
 
