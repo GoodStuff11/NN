@@ -25,13 +25,10 @@ public:
 	list();
 	~list();
 	int size();
-	int size() const;
 	void push_back(t val);
 	t* refAt(int index);
 	t valAt(int index);
-	t valAt(int index) const;
 	void erase(int index);
-	void swap(int i1,int i2);
 
 };
 #include "list.cpp"
