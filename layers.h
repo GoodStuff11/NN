@@ -1,16 +1,20 @@
 #include "data types/Matrix.h"
 
+//https://www.geeksforgeeks.org/virtual-function-cpp/
 class layer {
-	void apply(Matrix *input);
-	void activation(Matrix*);
+public:
+	layer();
+	virtual Matrix apply(Matrix input);
+	Matrix (*activation)(Matrix);
 	void update() {
 		return;
 	}
 };
 class dense: public layer {
-	Matrix *transform;
-	dense(int input, int output);
-	dense(int input, int output, void activation(Matrix*));
-	void apply(Matrix *input);
+public:
+	Matrix transform;
+	dense(unsigned int input, unsigned int output);
+	dense(unsigned int input, unsigned int output, Matrix activation(Matrix));
+	Matrix apply(Matrix input);
 	void update();
 };
