@@ -1,20 +1,25 @@
-#include "layers.h"
-#include "activation functions.h"
+#include "NeuralNetwork.h"
+#include "loss functions.h"
 
-layer::layer(){
-	activation = &none;
+NeuralNetwork::NeuralNetwork() {
+	model = new list<layer*>();
+	loss_function = &MSE;
 }
-Matrix layer::apply(Matrix input) {
+NeuralNetwork::~NeuralNetwork() {
+	delete model;
+}
+
+void NeuralNetwork::add_layer(layer *new_layer) {
+	model->push_back(new_layer);
+}
+void NeuralNetwork::set_loss_function(double (*loss_function)(Matrix, Matrix)) {
+	this->loss_function = loss_function;
+}
+Matrix NeuralNetwork::predict(Matrix input){
+	for (int i=0;i<model->size();i++){
+		input.print();
+		cout << endl;
+		input = model->valAt(i)->apply(input);
+	}
 	return input;
 }
-dense::dense(unsigned int input,unsigned int output) {
-	transform = Matrix(input, output);
-}
-dense::dense(unsigned int input,unsigned int output, Matrix (*activation)(Matrix)) {
-	this->activation = activation;
-	transform = Matrix(input, output);
-}
-Matrix dense::apply(Matrix input) {
-	return activation(transform*input);
-}
-
