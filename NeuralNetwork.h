@@ -7,9 +7,10 @@
 class NeuralNetwork {
 private:
 	list<layer*> *model;
-	double loss_function(Matrix*, Matrix*);
+	double (*loss_function)(Matrix, Matrix);
 public:
-	void set_loss_function(double loss_function(Matrix*, Matrix*));
+	void set_loss_function(double (*loss_function)(Matrix, Matrix));
+	Matrix predict(Matrix input);
 	NeuralNetwork();
 	virtual ~NeuralNetwork();
 	void add_layer(layer *new_layer);
