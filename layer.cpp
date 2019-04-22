@@ -1,16 +1,20 @@
 #include "layers.h"
-#include "activation functions.cpp"
+#include "activation functions.h"
 
-dense::dense(int input, int output) {
-	activation = none;
-	transform = new Matrix(input, output);
+layer::layer(){
+	activation = &none;
 }
-dense::dense(int input, int output, void activation(Matrix*)) {
+Matrix layer::apply(Matrix input) {
+	return input;
+}
+dense::dense(unsigned int input,unsigned int output) {
+	transform = Matrix(input, output);
+}
+dense::dense(unsigned int input,unsigned int output, Matrix (*activation)(Matrix)) {
 	this->activation = activation;
-	transform = new Matrix(input, output);
+	transform = Matrix(input, output);
 }
-void dense::apply(Matrix* input) {
-	input = transform * input;
-	activation(input);
+Matrix dense::apply(Matrix input) {
+	return activation(transform*input);
 }
 
