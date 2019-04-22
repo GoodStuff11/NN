@@ -1,22 +1,31 @@
 #ifndef MATRIX_H_
 #define MATRIX_H_
+#include <vector>
 
-class Matrix{
+class Matrix {
 private:
-	double* matrix;
+	std::vector<double> matrix;
 public:
 	unsigned int rows;
 	unsigned int columns;
 
+	Matrix();
 	Matrix(unsigned int rows, unsigned int columns);
-	virtual ~Matrix();
 
-	double& operator()(unsigned int row,unsigned int column);
-	Matrix* operator+(Matrix other);
-	Matrix* operator*(Matrix other);
-	Matrix* operator-(Matrix other);
-
+	double& operator()(unsigned int row, unsigned int column);
+	double& operator()(unsigned int row);
+	Matrix operator+(Matrix other);
+	Matrix operator*(Matrix other);
+	Matrix operator-(Matrix other);
+	Matrix operator=(Matrix other);
+	Matrix transpose();
 	void print();
+};
+
+//https://stackoverflow.com/questions/120876/what-are-the-rules-for-calling-the-superclass-constructor
+class IdentityMatrix: public Matrix {
+public:
+	IdentityMatrix(unsigned int size);
 };
 
 #endif
