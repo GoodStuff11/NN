@@ -27,5 +27,9 @@ class IdentityMatrix: public Matrix {
 public:
 	IdentityMatrix(unsigned int size);
 };
+class Vector: public Matrix {
+public:
+	Vector(unsigned int size);
+};
 
 #endif
