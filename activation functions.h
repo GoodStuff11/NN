@@ -4,22 +4,22 @@
 #include <cmath>
 class activation {
 public:
-	virtual Matrix call(Matrix mat) {
-		return mat;
+	virtual Vector call(Vector v) {
+		return v;
 	}
-	virtual Matrix call_derivative(Matrix mat) {
-		return Matrix(mat.rows, mat.columns);
+	virtual Matrix call_derivative(Vector v) {
+		return IdentityMatrix();
 	}
 };
 class softmax: public activation {
 public:
-	Matrix call(Matrix mat);
-	Matrix call_derivative(Matrix mat);
+	Vector call(Vector v);
+	Matrix call_derivative(Vector v);
 };
 class sigmoid: public activation {
 public:
-	Matrix call(Matrix mat);
-	Matrix call_derivative(Matrix mat);
+	Vector call(Vector v);
+	Matrix call_derivative(Vector v);
 };
 
 Matrix softmax(Matrix mat);
