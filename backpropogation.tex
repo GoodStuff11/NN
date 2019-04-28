@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+I will define the neural network by a set of nodes \(u_i^{(n)}\), where \(u_i^{(0)}\) is the input vector and \(u_i^{(N)}\) is the output vector. Connections between nodes are defined by a set of matrices \(w_{i j}^{(n)}\) and biases \(b_i^{(n)}\), where \(w_{i j}^{(n)}\) connects \(u_i^{(n)}\) and \(u_i^{(n+1)}\) via the relation,
+\[v_i^{(n+1)} = \sum_j w_{i j}^{(n)} u_j^{(n)} + b_i^{(n)}\]
+\[u_i^{(n+1)} = \sigma \big(v_i^{(n+1)}\big)\]
+with \(\sigma (v_i)\) representing the activation function.\par
+While output values can easily be computed using these formulas, we need to allow for the neural network to improve by optimizing \(w_{i j}^{(n)}\) and \(b_i^{(n)}\) for an activation function \(E\). This function will take in the output nodes of the neural network, \(u_i^{(N)}\) and compare them to an expected set of nodes, \(\tilde{u}_i^{(N)}\). A common definition for \(E\) is,
+\[E = \frac{1}{2} \sum_k \big(u_k^{(N)} - \tilde{u}_k^{(N)}\big)^2\]  
+\[\frac{\partial E}{\partial u_i^{(N)}} = \sum_k \big(u_k^{(N)} - \tilde{u}_k^{(N)}\big)\delta_{i k}=u_i^{(N)} - \tilde{u}_i^{(N)}\]
+Our goal is to vary \(E\) such that \(\frac{\partial E}{\partial w_{i j}^{(n)}} = \frac{\partial E}{\partial b_{i}^{(n)}}= 0, \forall n \in \{0,\cdots,N-1\}\). To do this, we can use gradient descent,
+\[\Delta w_{i j}^{(n)} = - \eta \frac{\partial E}{\partial w_{i j}^{(n)}}\]
+\[\Delta b_{i}^{(n)} = - \eta \frac{\partial E}{\partial b_{i}^{(n)}}\]
+The best way to define these values is by setting up a recursion relation so that we can gradually adjust the nodes from the greatest \(n\) to the smallest. We do this by defining
+\[s_j^{(n)} =\frac{\partial E}{\partial v_{j}^{(n)}} =\sum_k \frac{\partial E}{\partial u_{k}^{(n)}}\frac{\partial u_{k}^{(n)}}{\partial v_{j}^{(n)}}\]
+However this calculation is most easiest done when \(n=N\), where the equation simplifies to
+\[s_j^{(N)} = \sum_k \big(u_k^{(N)} - \tilde{u}_k^{(N)}\big)\frac{\partial u_{k}^{(N)}}{\partial v_{j}^{(N)}}\]
+Note that \(\frac{\partial u_{k}^{(n)}}{\partial v_{j}^{(n)}}\) is essentially the derivative of the \(n\)th activation function, but I will address this later. This definition allows for a much shorter way of defining the derivatives of \(E\)
+\[\frac{\partial E}{\partial w_{i j}^{(n-1)}} = \sum_k s_k^{(n)} \frac{\partial v_k^{(n)}}{\partial w_{i j}^{(n-1)}} = s_i^{(n)} u_j^{(n-1)}\] 
+\[\frac{\partial E}{\partial b_{i}^{(n-1)}} = \sum_k s_k^{(n)} \frac{\partial v_k^{(n)}}{\partial b_{i}^{(n-1)}} = s_i^{(n)}\] 
+Now to define the recursion relation, we can define \(s_j^{(n-1)}\) in terms of \(s_j^{(n-1)}\).
+\[s_j^{(n-1)} =\frac{\partial E}{\partial v_{j}^{(n-1)}} =  \sum_{a b} s_a^{(n)} \frac{\partial v_{a}^{(n)}}{\partial u_{b}^{(n-1)}}\frac{\partial u_{b}^{(n-1)}}{\partial v_{j}^{(n-1)}} \]
+\[s_j^{(n-1)} =\sum_{a b} s_a^{(n)} w_{a b}^{(n-1)}\frac{\partial u_{b}^{(n-1)}}{\partial v_{j}^{(n-1)}} \]
+The last thing that I need to define is \(\frac{\partial u_{i}^{(n)}}{\partial v_{j}^{(n)}}\), the activation function derivative. In most cases, this term is 0 for all values \(i \neq j\), because most activation functions can be fully defined by \(u_i^{(n)} = \sigma \big(v_i^{(n)}\big)\). However in the case of the softmax activation function, this is not the case:
+\[u_i^{(n)} = \frac{\exp(v_i^{(n)})}{\sum_k 1 + \exp(v_k^{(n)})}\]
+\[\frac{\partial u_{i}^{(n)}}{\partial v_{j}^{(n)}} = 
+\begin{cases}
+u_i^{(n)} \big(1-u_i^{(n)}\big) & i = j\\
+-u_i^{(n)} u_j^{(n)} & i \neq j\\
+\end{cases}\]
+\end{document}
+http://cis.poly.edu/~mleung/CS6673/s09/BackPropagation.pdf
