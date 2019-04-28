@@ -78,3 +78,8 @@ IdentityMatrix::IdentityMatrix(unsigned int size) :
 	for (unsigned int i = 0; i < size; i++)
 		(*this)(i, i) = 1;
 }
+Vector::Vector(unsigned int size) :
+		Matrix(size, 1) {
+	for (unsigned int i = 0; i < size; i++)
+		(*this)(i) = 1;
+}
