@@ -1,86 +1,89 @@
 #include "activation functions.h"
 
-Matrix softmax::call(Matrix mat){
+Vector softmax::call(Vector v) {
 	double sum = 0;
-	for (unsigned int i=0;i<mat.rows;i++)
-		for (unsigned int j=0;j<mat.columns;j++)
-			sum += exp(mat(i,j));
-	for (unsigned int i=0;i<mat.rows;i++)
-		for (unsigned int j=0;j<mat.columns;j++)
-			mat(i,j) = exp(mat(i,j))*sum;
-	return mat;
+	for (unsigned int i = 0; i < v.rows; i++)
+		sum += exp(v(i));
+	for (unsigned int i = 0; i < v.rows; i++)
+		v(i) = exp(v(i)) * sum;
+	return v;
 }
-Matrix softmax::call_derivative(Matrix mat){
-	double sum = 0;
-	for (unsigned int i=0;i<mat.rows;i++)
-		for (unsigned int j=0;j<mat.columns;j++)
-			sum += exp(mat(i,j));
-	for (unsigned int i=0;i<mat.rows;i++)
-		for (unsigned int j=0;j<mat.columns;j++)
-			mat(i,j) = exp(mat(i,j))*sum;
-	return mat;
-}
-Matrix sigmoid::call(Matrix mat){
-	for (unsigned int i=0;i<mat.rows;i++)
-		for (unsigned int j=0;j<mat.rows;j++)
-			mat(i,j) = 1/(exp(-mat(i,j)) + 1);
-	return mat;
-}
-Matrix softplus::call(Matrix mat){
-	for (unsigned int i=0;i<mat.rows;i++)
-		for (unsigned int j=0;j<mat.rows;j++)
-			mat(i,j) = log(1+exp(mat(i,j)));
-	return mat;
-}
-Matrix tanh::call(Matrix mat){
-	for (unsigned int i=0;i<mat.rows;i++)
-		for (unsigned int j=0;j<mat.rows;j++)
-			mat(i,j) = tanh(mat(i,j));
-	return mat;
-}
-Matrix relu::call(Matrix mat){
-	for (unsigned int i=0;i<mat.rows;i++)
-		for (unsigned int j=0;j<mat.rows;j++){
-			double val = mat(i,j);
-			if (val<0)
-				mat(i,j) = 0;
+Matrix softmax::call_derivative(Vector v) {
+	Vector u = call(v);
+	Matrix output = Matrix(u.rows, v.rows);
+	for (int i = 0; i < u.rows; i++) {
+		for (int j = 0; j < v.rows; j++) {
+			if (i != j)
+				output(i, j) = -u(i) * u(j);
 			else
-				mat(i,j) = val;
+				output(i, i) = u(i) * (1 - u(i));
 		}
-	return mat;
+	}
+	return output;
 }
-Matrix elu::call(Matrix mat,double a){
-	for (unsigned int i=0;i<mat.rows;i++)
-		for (unsigned int j=0;j<mat.rows;j++){
-			double val = mat(i,j);
-			if (val<0)
-				mat(i,j) = a*(exp(val) - 1);
+Vector sigmoid::call(Vector v) {
+	for (unsigned int i = 0; i < v.rows; i++)
+		v(i) = 1 / (exp(-v(i)) + 1);
+	return v;
+}
+Matrix sigmoid::call_derivative(Vector v) {
+	return call(v) * (1 - v).transpose();
+}
+Vector softplus::call(Vector v) {
+	for (unsigned int i = 0; i < v.rows; i++)
+		for (unsigned int j = 0; j < v.rows; j++)
+			v(i, j) = log(1 + exp(v(i, j)));
+	return v;
+}
+Vector tanh::call(Vector v) {
+	for (unsigned int i = 0; i < v.rows; i++)
+		for (unsigned int j = 0; j < v.rows; j++)
+			v(i, j) = tanh(v(i, j));
+	return v;
+}
+Vector relu::call(Vector v) {
+	for (unsigned int i = 0; i < v.rows; i++)
+		for (unsigned int j = 0; j < v.rows; j++) {
+			double val = v(i, j);
+			if (val < 0)
+				v(i, j) = 0;
 			else
-				mat(i,j) = val;
+				v(i, j) = val;
 		}
-	return mat;
+	return v;
 }
-Matrix leaky_relu::call(Matrix mat,double a){
-	for (unsigned int i=0;i<mat.rows;i++)
-		for (unsigned int j=0;j<mat.rows;j++){
-			double val = mat(i,j);
-			if (val<0)
-				mat(i,j) = a*val;
+Vector elu::call(Vector v, double a) {
+	for (unsigned int i = 0; i < v.rows; i++)
+		for (unsigned int j = 0; j < v.rows; j++) {
+			double val = v(i, j);
+			if (val < 0)
+				v(i, j) = a * (exp(val) - 1);
 			else
-				mat(i,j) = val;
+				v(i, j) = val;
 		}
-	return mat;
+	return v;
 }
-Matrix step::call(Matrix mat){
-	for (unsigned int i=0;i<mat.rows;i++)
-		for (unsigned int j=0;j<mat.rows;j++){
-			if (mat(i,j)<0)
-				mat(i,j) = 0;
+Vector leaky_relu::call(Vector v, double a) {
+	for (unsigned int i = 0; i < v.rows; i++)
+		for (unsigned int j = 0; j < v.rows; j++) {
+			double val = v(i, j);
+			if (val < 0)
+				v(i, j) = a * val;
 			else
-				mat(i,j) = 1;
+				v(i, j) = val;
 		}
-	return mat;
+	return v;
 }
-Matrix none::call(Matrix mat){
-	return mat;
+Vector step::call(Vector v) {
+	for (unsigned int i = 0; i < v.rows; i++)
+		for (unsigned int j = 0; j < v.rows; j++) {
+			if (v(i, j) < 0)
+				v(i, j) = 0;
+			else
+				v(i, j) = 1;
+		}
+	return v;
+}
+Vector none::call(Vector v) {
+	return v;
 }
