@@ -78,23 +78,14 @@ Matrix Matrix::operator=(MatrixStructure other) {
 	return *this;
 }
 unsigned int Matrix::get_rows() {
-	//if (transposed)
-	//	return columns;
 	return rows;
 }
 unsigned int Matrix::get_columns() {
-	//if (transposed)
-	//	return rows;
 	return columns;
 }
 double& MatrixStructure::operator()(unsigned int row, unsigned int column) {
 	//http://www.cplusplus.com/reference/string/to_string/
 	//https://stackoverflow.com/questions/12261915/how-to-throw-stdexceptions-with-variable-messages
-	if (transposed) {
-		unsigned int temp = row;
-		row = column;
-		column = temp;
-	}
 	if (row >= rows)
 		throw runtime_error(
 				"IndexError: " + to_string(row) + " >= " + to_string(rows));
@@ -102,6 +93,8 @@ double& MatrixStructure::operator()(unsigned int row, unsigned int column) {
 		throw runtime_error(
 				"IndexError: " + to_string(column) + " >= "
 						+ to_string(columns));
+	if (transposed)
+	    return array[rows * column + row];
 	return array[columns * row + column];
 }
 Matrix::Matrix(unsigned int rows, unsigned int columns) :
@@ -121,7 +114,8 @@ Vector::Vector() {
 }
 Vector Vector::operator=(MatrixStructure other) {
 	//https://en.cppreference.com/w/cpp/language/access
-	//kinda inspired by this, but i mostly just guessed and it worked
+	//MatrixStructure::array is not the same as other.array
+	
 	transposed = MatrixStructure::transposed;
 	array = MatrixStructure::array;
 	columns = MatrixStructure::columns;
