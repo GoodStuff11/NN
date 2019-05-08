@@ -1,34 +1,16 @@
 #ifndef MATRIX_H_
 #define MATRIX_H_
-#include <vector>
-class MatrixStructure{
-protected:
-	std::vector<double> array;
-	unsigned int rows;
-	unsigned int columns;
-	bool transposed;
+#include "MatrixStructure.h"
 
-	double& operator()(unsigned int row, unsigned int column);
-	MatrixStructure(unsigned int rows, unsigned int columns);
-	MatrixStructure();
-public:
-
-	MatrixStructure operator+(MatrixStructure other);
-	MatrixStructure operator*(MatrixStructure other);
-	MatrixStructure operator-(MatrixStructure other);
-	MatrixStructure operator==(MatrixStructure other);
-	MatrixStructure transpose();
-	void print();
-};
-class Matrix: public MatrixStructure{
+class Matrix: public MatrixStructure {
 public:
 	//https://stackoverflow.com/questions/2986891/how-to-publicly-inherit-from-a-base-class-but-make-some-of-public-methods-from-t
 
 	Matrix();
 	Matrix(unsigned int rows, unsigned int columns);
 
-	unsigned int get_rows();
-	unsigned int get_columns();
+	unsigned int get_rows() const;
+	unsigned int get_columns() const;
 
 	Matrix operator=(MatrixStructure other);
 	//double& operator()(unsigned int row, unsigned int column);
@@ -49,7 +31,7 @@ public:
 	Vector(unsigned int size);
 
 	Vector operator=(MatrixStructure other);
-	unsigned int get_size();
+	unsigned int get_size() const;
 	double& operator()(unsigned int index);
 };
 
