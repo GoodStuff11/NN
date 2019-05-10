@@ -1,20 +1,47 @@
 #ifndef MATRIX_H_
 #define MATRIX_H_
-#include "MatrixStructure.h"
+#include <vector>
 
-class Matrix: public MatrixStructure {
+class Vector {
+private:
+	std::vector<double> array;
+	unsigned int size;
+	bool transposed;
 public:
+	Vector();
+	Vector(unsigned int size);
+
+	Vector operator=(Vector other);
+	unsigned int get_size() const;
+	double& operator()(unsigned int index);
+	friend Vector transpose(Vector v);
+	bool get_transposed() const;
+
+	void transpose();
+	void print();
+};
+
+class Matrix {
+protected:
 	//https://stackoverflow.com/questions/2986891/how-to-publicly-inherit-from-a-base-class-but-make-some-of-public-methods-from-t
+	std::vector<double> array;
+	unsigned int rows;
+	unsigned int columns;
+	bool transposed;
+public:
+	double& operator()(unsigned int row, unsigned int column);
 
 	Matrix();
 	Matrix(unsigned int rows, unsigned int columns);
 
 	unsigned int get_rows() const;
 	unsigned int get_columns() const;
+	friend Matrix transpose(Matrix m);
+	void transpose();
+	void print();
 
-	Matrix operator=(MatrixStructure other);
-	//double& operator()(unsigned int row, unsigned int column);
-	using MatrixStructure::operator();
+	Matrix operator=(Matrix other);
+
 };
 
 //https://stackoverflow.com/questions/120876/what-are-the-rules-for-calling-the-superclass-constructor
@@ -22,17 +49,19 @@ class IdentityMatrix: public Matrix {
 public:
 	IdentityMatrix(unsigned int size);
 };
+Matrix operator+(Matrix m1, Matrix m2);
+Vector operator+(Vector m1, Vector m2);
 
-class Vector: public MatrixStructure {
-protected:
-	double& operator()(unsigned int row, unsigned int column);
-public:
-	Vector();
-	Vector(unsigned int size);
+Vector operator-(Vector m1, Vector m2);
+Matrix operator-(Matrix m1, Matrix m2);
 
-	Vector operator=(MatrixStructure other);
-	unsigned int get_size() const;
-	double& operator()(unsigned int index);
-};
+bool operator==(Matrix m1, Matrix m2);
+bool operator==(Vector m1, Vector m2);
+
+
+Matrix operator*(Matrix m1, Matrix m2);
+Vector operator*(Vector v, Matrix m);
+Vector operator*(Matrix m, Vector v);
+Matrix operator*(Vector m, Vector v);
 
 #endif
