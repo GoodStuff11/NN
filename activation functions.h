@@ -1,14 +1,14 @@
 #ifndef ACTIVATION_FUNCTIONS_H_
 #define ACTIVATION_FUNCTIONS_H_
+
 #include "data types/Matrix.h"
-#include <cmath>
 class activation {
 public:
 	virtual Vector call(Vector v) {
 		return v;
 	}
 	virtual Matrix call_derivative(Vector v) {
-		return IdentityMatrix();
+		return IdentityMatrix(v.get_size());
 	}
 };
 class softmax: public activation {
@@ -21,15 +21,42 @@ public:
 	Vector call(Vector v);
 	Matrix call_derivative(Vector v);
 };
-
-Matrix softmax(Matrix mat);
-Matrix sigmoid(Matrix mat);
-Matrix relu(Matrix mat);
-Matrix leaky_relu(Matrix mat, double a);
-Matrix tanh(Matrix mat);
-Matrix elu(Matrix mat, double a);
-Matrix step(Matrix mat);
-Matrix softplus(Matrix mat);
-Matrix none(Matrix mat);
+class relu: public activation {
+public:
+	Vector call(Vector v);
+	Matrix call_derivative(Vector v);
+};
+class leaky_relu: public activation {
+public:
+	//assume a = 0.5
+	Vector call(Vector v);
+	Matrix call_derivative(Vector v);
+};
+class tanh: public activation {
+public:
+	Vector call(Vector v);
+	Matrix call_derivative(Vector v);
+};
+class elu: public activation {
+public:
+	//assume a = 0.5
+	Vector call(Vector v);
+	Matrix call_derivative(Vector v);
+};
+class step: public activation {
+public:
+	Vector call(Vector v);
+	Matrix call_derivative(Vector v);
+};
+class softplus: public activation {
+public:
+	Vector call(Vector v);
+	Matrix call_derivative(Vector v);
+};
+class none: public activation {
+public:
+	Vector call(Vector v);
+	Matrix call_derivative(Vector v);
+};
 
 #endif /* ACTIVATION_FUNCTIONS_H_ */
