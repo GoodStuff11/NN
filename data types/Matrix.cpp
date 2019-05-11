@@ -139,6 +139,12 @@ bool operator==(Matrix m1, Matrix m2) {
 				return false;
 	return true;
 }
+Matrix operator*(double constant, Matrix m) {
+	for (unsigned int i = 0; i < m.get_rows(); i++)
+		for (unsigned int j = 0; j < m.get_columns(); j++)
+			m(i, j) *= constant;
+	return m;
+}
 double& Matrix::operator()(unsigned int row, unsigned int column) {
 	//http://www.cplusplus.com/reference/string/to_string/
 	//https://stackoverflow.com/questions/12261915/how-to-throw-stdexceptions-with-variable-messages
@@ -230,4 +236,27 @@ bool operator==(Vector v1, Vector v2) {
 		if (v1(i) != v2(i))
 			return false;
 	return true;
+}
+Vector operator*(double constant, Vector v) {
+	for (unsigned int i = 0; i < v.get_size(); i++)
+		v(i) *= constant;
+	return v;
+}
+Vector operator+(double constant, Vector v) {
+	for (unsigned int i = 0; i < v.get_size(); i++)
+		v(i) += constant;
+	return v;
+}
+Vector operator-(double constant, Vector v) {
+	for (unsigned int i = 0; i < v.get_size(); i++)
+		v(i) = constant - v(i);
+	return v;
+}
+Vector operator+(Vector v, double constant) {
+	return operator+(constant,v);
+}
+Vector operator-(Vector v, double constant) {
+	for (unsigned int i = 0; i < v.get_size(); i++)
+		v(i) -= constant;
+	return v;
 }

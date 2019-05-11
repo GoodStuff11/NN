@@ -49,6 +49,7 @@ class IdentityMatrix: public Matrix {
 public:
 	IdentityMatrix(unsigned int size);
 };
+
 Matrix operator+(Matrix m1, Matrix m2);
 Vector operator+(Vector m1, Vector m2);
 
@@ -64,4 +65,10 @@ Vector operator*(Vector v, Matrix m);
 Vector operator*(Matrix m, Vector v);
 Matrix operator*(Vector m, Vector v);
 
+Matrix operator*(double constant, Matrix m);
+Vector operator*(double constant, Vector m);
+Vector operator+(double constant, Vector m);
+Vector operator-(double constant, Vector m);
+Vector operator+(Vector m, double constant);
+Vector operator-(Vector m, double constant);
 #endif
