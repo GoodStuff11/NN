@@ -1,6 +1,8 @@
 #include "activation functions.h"
 #include <cmath>
-Vector softmax::call(Vector v) {
+#include <iostream>
+namespace af{
+Vector softmax(Vector v) {
 	double sum = 0;
 	for (unsigned int i = 0; i < v.get_size(); i++)
 		sum += exp(v(i));
@@ -8,38 +10,22 @@ Vector softmax::call(Vector v) {
 		v(i) = exp(v(i)) * sum;
 	return v;
 }
-Matrix softmax::call_derivative(Vector v) {
-	Vector u = call(v);
-	Matrix output = Matrix(u.get_size(), v.get_size());
-	for (int i = 0; i < u.get_size(); i++) {
-		for (int j = 0; j < v.get_size(); j++) {
-			if (i != j)
-				output(i, j) = -u(i) * u(j);
-			else
-				output(i, i) = u(i) * (1 - u(i));
-		}
-	}
-	return output;
-}
-Vector sigmoid::call(Vector v) {
+Vector sigmoid(Vector v) {
 	for (unsigned int i = 0; i < v.get_size(); i++)
 		v(i) = 1 / (exp(-v(i)) + 1);
 	return v;
 }
-Matrix sigmoid::call_derivative(Vector v) {
-	return call(v) * (1 - v).transpose();
-}
-Vector softplus::call(Vector v) {
+Vector softplus(Vector v) {
 	for (unsigned int i = 0; i < v.get_size(); i++)
 		v(i) = log(1 + exp(v(i)));
 	return v;
 }
-Vector tanh::call(Vector v) {
+Vector tanh(Vector v) {
 	for (unsigned int i = 0; i < v.get_size(); i++)
-		v(i) = tanh(v(i));
+		v(i) = std::tanh(v(i));
 	return v;
 }
-Vector relu::call(Vector v) {
+Vector relu(Vector v) {
 	for (unsigned int i = 0; i < v.get_size(); i++) {
 		double val = v(i);
 		if (val < 0)
@@ -49,7 +35,7 @@ Vector relu::call(Vector v) {
 	}
 	return v;
 }
-Vector elu::call(Vector v) {
+Vector elu(Vector v) {
 	for (unsigned int i = 0; i < v.get_size(); i++) {
 		double val = v(i);
 		if (val < 0)
@@ -59,7 +45,7 @@ Vector elu::call(Vector v) {
 	}
 	return v;
 }
-Vector leaky_relu::call(Vector v) {
+Vector leaky_relu(Vector v) {
 	for (unsigned int i = 0; i < v.get_size(); i++) {
 		double val = v(i);
 		if (val < 0)
@@ -69,7 +55,7 @@ Vector leaky_relu::call(Vector v) {
 	}
 	return v;
 }
-Vector step::call(Vector v) {
+Vector step(Vector v) {
 	for (unsigned int i = 0; i < v.get_size(); i++) {
 		if (v(i) < 0)
 			v(i) = 0;
@@ -78,6 +64,38 @@ Vector step::call(Vector v) {
 	}
 	return v;
 }
-Vector none::call(Vector v) {
+Vector none(Vector v) {
 	return v;
+}
+
+Matrix softmax_derivative(Vector v) {
+	Vector u = softmax(v);
+	Matrix output = Matrix(u.get_size(), v.get_size());
+	for (unsigned int i = 0; i < u.get_size(); i++) {
+		for (unsigned int j = 0; j < v.get_size(); j++) {
+			if (i != j)
+				output(i, j) = -u(i) * u(j);
+			else
+				output(i, i) = u(i) * (1 - u(i));
+		}
+	}
+	return output;
+}
+Matrix relu_derivative(Vector v) {
+	Matrix m = IdentityMatrix(v.get_size());
+	for (int i=0;i<v.get_size();i++){
+		if (v(i) > 0)
+			m(i, i) = 1;
+		else
+			m(i,i) =0;
+	}
+	return m;
+}
+Matrix sigmoid_derivative(Vector v) {
+	return sigmoid(v) * transpose(1 - v);
+}
+Matrix none_derivative(Vector v) {
+	return Matrix(v.get_size(), v.get_size());
+}
+
 }

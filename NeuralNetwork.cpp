@@ -12,14 +12,20 @@ NeuralNetwork::~NeuralNetwork() {
 void NeuralNetwork::add_layer(layer *new_layer) {
 	model->push_back(new_layer);
 }
-void NeuralNetwork::set_loss_function(double (*loss_function)(Matrix, Matrix)) {
-	this->loss_function = loss_function;
+void NeuralNetwork::set_loss_function(std::string function) {
+	if (function == "MSE")
+		this->loss_function = &MSE;
+	else if(function ==  "MAE")
+		this->loss_function = &MAE;
 }
-Matrix NeuralNetwork::predict(Matrix input){
+Vector NeuralNetwork::predict(Vector input){
 	for (int i=0;i<model->size();i++){
 		input.print();
 		cout << endl;
 		input = model->valAt(i)->apply(input);
 	}
 	return input;
+}
+void NeuralNetwork::fit(DataFrame train_data, DataFrame train_labels){
+
 }
