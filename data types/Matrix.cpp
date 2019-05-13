@@ -260,3 +260,9 @@ Vector operator-(Vector v, double constant) {
 		v(i) -= constant;
 	return v;
 }
+Vector array2vector(double* array, int size){
+	Vector v = Vector(size);
+	for (int i=0;i<size;i++)
+		v(i) = array[i];
+	return v;
+}

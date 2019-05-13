@@ -3,6 +3,9 @@
 
 class DataFrame {
 private:
+	unsigned int columns;
+	unsigned int rows;
+
 	double** data;
 
 	int Partition(int column, int left, int right);
@@ -12,14 +15,20 @@ private:
 	void InsertionSort(int column);
 
 public:
-	unsigned int columns;
-	unsigned int rows;
-	void sort_by(int column);
+	DataFrame();
 	DataFrame(unsigned int rows, unsigned int columns);
 	virtual ~DataFrame();
+
+	unsigned int get_columns();
+	unsigned int get_rows();
+
+	void sort_by(int column);
 	double &operator()(unsigned int row, unsigned int column);
-	void print();
 	void swap(unsigned int row1, unsigned int row2);
+	void read_binary_file(std::string name);
+	void csv2binary(std::string input,std::string output);
+	void print();
+
 
 };
 

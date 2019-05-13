@@ -1,8 +1,11 @@
 #include "DataFrame.h"
 #include <iostream>
 #include <cmath>
+#include <fstream>
 using namespace std;
-
+DataFrame::DataFrame(){
+	return;
+}
 DataFrame::DataFrame(unsigned int rows, unsigned int columns) {
 	this->columns = columns;
 	this->rows = rows;
@@ -121,5 +124,27 @@ void DataFrame::sort_by(int column) {
 		QuickSortRecursive(column, 0, columns - 1);
 
 	}
+}
+unsigned int DataFrame::get_columns() {
+	return columns;
+}
+unsigned int DataFrame::get_rows() {
+	return rows;
+}
+void DataFrame::read_binary_file(std::string name) {
+	// make use of seekg
+	std::ifstream file(name, ios::binary);
+	file.read((char*) &rows, sizeof(int));
+	file.read((char*) &columns, sizeof(int));
+
+	data = new double*[rows];
+	for (int row = 0; row < rows; row++) {
+		data[row] = new double[columns];
+		for (int column = 0; column < columns; column++) {
+			file.read((char*) &data[row][column], sizeof(double));
+		}
+	}
+	file.close();
+
 }
 
