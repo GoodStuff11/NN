@@ -21,18 +21,11 @@ int main() {
 	df->print();
 	cout << endl;
 
-	df->sort_by(0);
-	df->print();
-	cout << endl;
-
 	NeuralNetwork *model = new NeuralNetwork();
 	model->add_layer(new dense(2, 2, "relu"));
 	model->add_layer(new dense(2, 1, "softmax"));
 
-	Vector v = Vector(2);
-	v(0) = 1;
-	v(1) = 2;
-	model->predict(v).print();
+	model->fit()
 
 	return 0;
 }
