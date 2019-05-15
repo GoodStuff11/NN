@@ -2,8 +2,10 @@
 #include <iostream>
 #include <cmath>
 #include <fstream>
+#include <sstream>
+#include <algorithm>
 using namespace std;
-DataFrame::DataFrame(){
+DataFrame::DataFrame() {
 	return;
 }
 DataFrame::DataFrame(unsigned int rows, unsigned int columns) {
@@ -138,13 +140,65 @@ void DataFrame::read_binary_file(std::string name) {
 	file.read((char*) &columns, sizeof(int));
 
 	data = new double*[rows];
-	for (int row = 0; row < rows; row++) {
+	for (unsigned int row = 0; row < rows; row++) {
 		data[row] = new double[columns];
-		for (int column = 0; column < columns; column++) {
+		for (unsigned int column = 0; column < columns; column++) {
 			file.read((char*) &data[row][column], sizeof(double));
 		}
 	}
 	file.close();
+
+}
+void csv2binary(std::string input, std::string output) {
+	ifstream inputfile(input);
+	ofstream outputfile(output, ios::binary);
+
+	string headings;
+	int columns = 1;
+	int rows = 1;
+
+	// get one line and find the amount of columns in it
+	outputfile.seekp(2 * sizeof(int), ios_base::beg);
+	getline(inputfile, headings);
+	for (unsigned int i = 0; i < headings.size(); i++)
+		if (headings[i] == ',')
+			columns++;
+
+	string line;
+	double value;
+	// parse string already read from file
+	stringstream ss(headings);
+	while (getline(ss, line, ',')) {
+		value = stod(line);
+		outputfile.write((char*) &value, sizeof(double));
+		//cout << line << ' ';
+	}
+	//cout << endl;
+
+	// based on the amount of columns, parse up to
+	// the ',' character and at end of line parse '\n'
+	while (inputfile.good()) {
+		for (int i = 0; i < columns - 1; i++) {
+			getline(inputfile, line, ',');
+			value = stod(line);
+			outputfile.write((char*) &value, sizeof(double));
+			//cout << line << " ";
+		}
+		getline(inputfile, line, '\n');
+		//cout << line << endl;
+		value = stod(line);
+		outputfile.write((char*) &value, sizeof(double));
+		if (inputfile.fail())
+			break;
+		rows++;
+	}
+	// write rows and columns to the start of the file
+	outputfile.seekp(0, ios_base::beg);
+	outputfile.write((char*) &rows, sizeof(int));
+	outputfile.write((char*) &columns, sizeof(int));
+
+	outputfile.close();
+	inputfile.close();
 
 }
 

@@ -1,6 +1,6 @@
 #ifndef DATAFRAME_H_
 #define DATAFRAME_H_
-
+#include <string>
 class DataFrame {
 private:
 	unsigned int columns;
@@ -26,10 +26,8 @@ public:
 	double &operator()(unsigned int row, unsigned int column);
 	void swap(unsigned int row1, unsigned int row2);
 	void read_binary_file(std::string name);
-	void csv2binary(std::string input,std::string output);
 	void print();
 
-
 };
-
+void csv2binary(std::string input, std::string output);
 #endif /* DATAFRAME_H_ */
