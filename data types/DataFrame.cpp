@@ -31,14 +31,6 @@ void DataFrame::swap(unsigned int row1, unsigned int row2) {
 	data[row1] = data[row2];
 	data[row2] = temp;
 }
-void DataFrame::print() {
-	for (unsigned int i = 0; i < rows; i++) {
-		for (unsigned int j = 0; j < columns; j++) {
-			cout << data[i][j] << ' ';
-		}
-		cout << endl;
-	}
-}
 
 int DataFrame::Partition(int column, int left, int right) {
 	double* pivot = data[right];
@@ -138,10 +130,11 @@ void DataFrame::read_binary_file(std::string name) {
 	std::ifstream file(name, ios::binary);
 	file.read((char*) &rows, sizeof(int));
 	file.read((char*) &columns, sizeof(int));
-
+	
 	data = new double*[rows];
 	for (unsigned int row = 0; row < rows; row++) {
 		data[row] = new double[columns];
+		
 		for (unsigned int column = 0; column < columns; column++) {
 			file.read((char*) &data[row][column], sizeof(double));
 		}
@@ -202,3 +195,11 @@ void csv2binary(std::string input, std::string output) {
 
 }
 
+ostream& operator<<(ostream& os, const DataFrame* df){
+    for (unsigned int i = 0; i < df->rows; i++) {
+		for (unsigned int j = 0; j < df->columns; j++) 
+			cout << df->data[i][j] << ' ';
+		cout << endl;
+	}
+    return os;
+}
