@@ -11,7 +11,17 @@ int rand(int min, int max) {
 	return rand() % (max - min) + min;
 }
 int main() {
+	//csv2binary("training_labels.txt");
+	DataFrame *training = new DataFrame();
+	DataFrame *training_labels = new DataFrame();
 
+	training->read_binary_file("training.bin");
+	training_labels->read_binary_file("training_labels.bin");
+
+	cout << training << endl;
+	cout << training_labels << endl;
+
+/*
 	int size = 10;
 	DataFrame *df = new DataFrame(size, size);
 
@@ -26,6 +36,6 @@ int main() {
 	model->add_layer(new dense(2, 1, "softmax"));
 
 	model->fit()
-
+*/
 	return 0;
 }
