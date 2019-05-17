@@ -26,6 +26,9 @@ DataFrame::~DataFrame() {
 double& DataFrame::operator()(unsigned int row, unsigned int column) {
 	return data[row][column];
 }
+double* DataFrame::operator[](unsigned int row) {
+	return data[row];
+}
 void DataFrame::swap(unsigned int row1, unsigned int row2) {
 	double* temp = data[row1];
 	data[row1] = data[row2];
@@ -130,11 +133,11 @@ void DataFrame::read_binary_file(std::string name) {
 	std::ifstream file(name, ios::binary);
 	file.read((char*) &rows, sizeof(int));
 	file.read((char*) &columns, sizeof(int));
-	
+
 	data = new double*[rows];
 	for (unsigned int row = 0; row < rows; row++) {
 		data[row] = new double[columns];
-		
+
 		for (unsigned int column = 0; column < columns; column++) {
 			file.read((char*) &data[row][column], sizeof(double));
 		}
@@ -194,10 +197,14 @@ void csv2binary(std::string input, std::string output) {
 	inputfile.close();
 
 }
+void csv2binary(string input){
+	// remove .txt or .csv at end of file and replace with .bin
+	csv2binary(input,input.substr(0,input.find('.')) + ".bin");
+}
 
 ostream& operator<<(ostream& os, const DataFrame* df){
     for (unsigned int i = 0; i < df->rows; i++) {
-		for (unsigned int j = 0; j < df->columns; j++) 
+		for (unsigned int j = 0; j < df->columns; j++)
 			cout << df->data[i][j] << ' ';
 		cout << endl;
 	}

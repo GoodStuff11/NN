@@ -25,9 +25,11 @@ public:
 
 	void sort_by(int column);
 	double &operator()(unsigned int row, unsigned int column);
+	double* operator[](unsigned int row);
 	void swap(unsigned int row1, unsigned int row2);
 	void read_binary_file(std::string name);
 	friend std::ostream& operator<<(std::ostream& os, const DataFrame* df);
 };
 void csv2binary(std::string input, std::string output);
+void csv2binary(std::string input);
 #endif /* DATAFRAME_H_ */
