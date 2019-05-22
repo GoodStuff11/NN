@@ -3,9 +3,6 @@
 Layer::Layer() {
 	activation_function = &af::none;
 }
-Vector Layer::apply(Vector input) {
-	return input;
-}
 dense::dense(unsigned int input, unsigned int output) {
 	transform = Matrix(input, output);
 }
@@ -33,9 +30,9 @@ dense::dense(unsigned int input, unsigned int output, std::string function) {
 	}
 	transform = Matrix(input, output);
 }
-Vector dense::apply(Vector input) {
+Vector dense::apply(Vector input) const {
 	return activation_function(transform * input);
 }
-void dense::update(Matrix deltaW) {
+void dense::update(Matrix deltaW) const {
 	transform = transform + deltaW;
 }
