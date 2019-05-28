@@ -46,6 +46,9 @@ dense::build(Layer *previous_layer){
 Vector dense::call(Vector input) const {
 	return activation_function(transform * input);
 }
+Matrix dense::calculate_s(Vector error, Vector nodes) const{
+	return new_s = transpose(error) * activation_function_derivative(nodes)
+}
 Matrix dense::update(Vector s, Vector nodes) {
 	const double training_rate = 0.1;
 	
