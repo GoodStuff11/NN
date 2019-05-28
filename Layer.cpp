@@ -1,13 +1,10 @@
 #include "activation functions.h"
 #include "Layers.h"
-Layer::Layer() {
-	activation_function = &af::none;
+
+unsigned int Layer::getNotes() const{
+	return nodes;	
 }
-dense::dense(unsigned int input, unsigned int output) {
-	transform = Matrix(input, output);
-}
-dense::dense(unsigned int input, unsigned int output, std::string function) {
-	// activation functions that do not have a derivative are not yet implemented and aren't yet supported
+void Layer::decodeActivationFunction(std::string function){
 	if (function == "softmax") {
 		activation_function = &af::softmax;
 		activation_function_derivative = &af::softmax_derivative;
@@ -27,12 +24,47 @@ dense::dense(unsigned int input, unsigned int output, std::string function) {
 		activation_function = &af::elu;
 	} else if (function == "leaky relu") {
 		activation_function = &af::leaky_relu;
-	}
-	transform = Matrix(input, output);
+	}	
 }
-Vector dense::apply(Vector input) const {
+dense::dense(unsigned int output) {
+	activation_function = &none;
+	activation_function_derivative = &none_derivative;
+	nodes = output;
+}
+
+dense::dense(unsigned int output_nodes, std::string function) {
+	// activation functions that do not have a derivative are not yet implemented and aren't yet supported
+	decodeActivationFunction(function);
+	nodes = output_nodes;
+}
+dense::build(Layer *previous_layer){
+	unsigned int other_nodes = previous_layer->getNodes();
+	if (other_nodes == -1)
+		other_nodes = nodes;
+	transform = Matrix(other_nodes, nodes);
+}
+Vector dense::call(Vector input) const {
 	return activation_function(transform * input);
 }
-void dense::update(Matrix deltaW) const {
-	transform = transform + deltaW;
+Matrix dense::update(Vector s, Vector nodes) {
+	const double training_rate = 0.1;
+	
+	Vector new_s = transpose(s) * transform * activation_function_derivative(nodes);
+	transform = transform - training_rate * s * transpose(nodes);
+	
+	return new_s;
 }
+activation::activation(std::string function){
+	decodeActivationFunction(function);
+	nodes = -1;
+}
+void activation::call(Vector input){
+	return activation_function(input);
+}
+Matrix update(Vector s, Vector nodes){
+	return IdentityMatrix(); // I don't know what to return here yet	
+}
+void build(Layer *previous_layer){
+
+}
+
