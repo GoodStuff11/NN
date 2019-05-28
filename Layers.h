@@ -3,20 +3,31 @@
 #include <string>
 //https://www.geeksforgeeks.org/virtual-function-cpp/
 class Layer {
+	unsigned int nodes;
 public:
-	Layer();
-
+	unsigned int getNodes() const;
+protected:
 	Vector (*activation_function)(Vector);
 	Matrix (*activation_function_derivative)(Vector);
-
-	virtual Vector apply(Vector input) const = 0;
-	virtual void update(Matrix deltaW) const = 0;
+	void decodeActivationFunction(std::string function);
+	
+	virtual Vector call(Vector input) const = 0;
+	virtual void update(Vector s, Vector nodes) = 0;
+	virtual void build(Layer *previous_layer) = 0;
 };
 class dense: public Layer {
+	Matrix weights;
 public:
-	Matrix transform;
-	dense(unsigned int input, unsigned int output);
-	dense(unsigned int input, unsigned int output, std::string);
-	virtual Vector apply(Vector input) const;
-	virtual void update(Matrix deltaW) const;
+	dense(unsigned int output);
+	dense(unsigned int output, std::string function);
+	virtual Vector call(Vector input) const;
+	virtual Matrix update(Vector s, Vector nodes);
+	virtual void build(Layer *previous_layer);
+};
+class activation: public Layer {
+public:
+	activation(std::string function);
+	virtual Vector call(Vector input) const;
+	virtual Matrix update(Vector s, Vector nodes);
+	virtual void build(Layer *previous_layer);
 };
