@@ -1,7 +1,7 @@
 #ifndef MATRIX_H_
 #define MATRIX_H_
 #include <vector>
-
+#include <ostream>
 class Vector {
 private:
 	std::vector<double> array;
@@ -10,6 +10,10 @@ private:
 public:
 	Vector();
 	Vector(unsigned int size);
+	Vector(std::initializer_list<double> l) : array(l) {
+		size = l.size();
+		transposed = false;
+	}
 
 	Vector operator=(Vector other);
 	unsigned int get_size() const;
@@ -18,7 +22,7 @@ public:
 	bool get_transposed() const;
 
 	void transpose();
-	void print();
+	friend std::ostream& operator<<(std::ostream& os, Vector v);
 };
 
 class Matrix {
@@ -38,9 +42,9 @@ public:
 	unsigned int get_columns() const;
 	friend Matrix transpose(Matrix m);
 	void transpose();
-	void print();
 
 	Matrix operator=(Matrix other);
+	friend std::ostream& operator<<(std::ostream& os, Matrix m);
 
 };
 
