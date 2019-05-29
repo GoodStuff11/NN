@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <stdexcept>
-
+#include <algorithm>
 Matrix::Matrix() {
 	rows = 0;
 	columns = 0;
@@ -30,14 +30,15 @@ Matrix::Matrix(unsigned int rows, unsigned int columns) {
 	for (unsigned int i = 0; i < rows * columns; i++)
 		array[i] = 0;
 }
-void Matrix::print() {
-	for (unsigned int i = 0; i < rows; i++) {
-		for (unsigned int j = 0; j < columns; j++) {
-			std::cout << (*this)(i, j) << ' ';
+std::ostream& operator<<(std::ostream& os, Matrix m){
+    for (unsigned int i = 0; i < m.rows; i++) {
+		for (unsigned int j = 0; j < m.columns; j++) {
+			std::cout << m(i, j) << ' ';
 		}
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
+    return os;
 }
 Matrix operator+(Matrix m1, Matrix m2) {
 	for (unsigned int i = 0; i < m1.get_rows(); i++)
@@ -204,16 +205,17 @@ unsigned int Vector::get_size() const {
 bool Vector::get_transposed() const {
 	return transposed;
 }
-void Vector::print() {
-	char divider = '\n';
-	if (transposed)
+std::ostream& operator<<(std::ostream& os, Vector v){
+    char divider = '\n';
+	if (v.transposed)
 		divider = ' ';
 
-	for (unsigned int i = 0; i < this->size; i++)
-		std::cout << (*this)(i) << divider;
-	if (transposed)
+	for (unsigned int i = 0; i < v.size; i++)
+		std::cout << v(i) << divider;
+	if (v.transposed)
 		std::cout << std::endl;
 	std::cout << std::endl;
+    return os;
 }
 Vector operator+(Vector v1, Vector v2) {
 	if (v1.get_transposed() ^ v2.get_transposed())
