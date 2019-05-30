@@ -28,6 +28,16 @@ public:
 	virtual Matrix update(Vector s, Vector nodes);
 	virtual void build(Layer *previous_layer);
 };
+class input: pubic Layer{
+	input(unsigned int input) {
+		nodes = input;	
+	}
+	// virtual Vector call(Vector input) const {}
+	// virtual Matrix calculate_s(Vector error, Vector nodes) const {}
+	// virtual Matrix update(Vector s, Vector nodes) {}
+	// virtual void build(Layer *previous_layer) {}
+	
+}
 class activation: public Layer {
 public:
 	activation(std::string function);
