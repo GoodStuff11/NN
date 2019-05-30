@@ -36,18 +36,22 @@ Vector* NeuralNetwork::calculate_nodes(Vector input) {
 	nodes[0] = input;
 	return nodes;
 }
-void NeuralNetwork::fit(DataFrame train_data, DataFrame train_labels) {
+// TODO: implement batch size and a return value so that progress can be plotted
+// for each row, I adjusted the weights. I did NOT take the average and adjust them with that
+void NeuralNetwork::fit(DataFrame train_data, DataFrame train_labels, unsigned int epochs) {
 	// a row in train_data and train_labels are the input and output vectors respectively
-	Vector *s = new Vector[model->size() - 1];
-	for (int row = 0; row < train_data.get_rows(); row++) {
-		Vector output = predict(array2vector(train_data[row], train_data.get_columns()));
-		Vector expected_output = array2vector(train_labels[row],train_data.get_columns());
-		Vector dEdu = loss_function(output, expected_output);
+	for (unsigned int i = 0; i < epochs; i++){
+		for (int row = 0; row < train_data.get_rows(); row++) {
+			//Vector output = predict(array2vector(train_data[row], train_data.get_columns()));
+			Vector *nodes = calculate_nodes(array2vector(train_data[row], train_data.get_columns()));
+			Vector expected_output = array2vector(train_labels[row],train_data.get_columns());
+			Vector error = loss_function(nodes[0], expected_output);
 
-		for (int layer_number = 0; layer_number < model->size();layer_number++) {
-			Layer current_layer = model->valAt(layer_number);
-			s[layer_number] = current_layer.activation_function_derivative(current_nodes);
+			Vector s = model->valAt(layer_number).calculate_s(error, nodes[0]);
+			for (int layer_number = 1; layer_number < model->size() - 1;layer_number++) {
+				Layer current_layer = model->valAt(layer_number);
+				s = current_layer.update(s, nodes[layer_number]);
+			}
 		}
-
 	}
 }
