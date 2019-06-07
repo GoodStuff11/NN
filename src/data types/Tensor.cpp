@@ -148,3 +148,34 @@ Tensor operator*(double num, Tensor t) {
 	}
 	return t;
 }
+Tensor operator-(double num, Tensor t) {
+	for(int i = 0; i < t.data.size(); i++) {
+		t.data.at(i) = num - t.data.at(i);
+	}
+	return t;
+}
+Tensor operator+(double num, Tensor t) {
+	for(int i = 0; i < t.data.size(); i++) {
+		t.data.at(i) += num;
+	}
+	return t;
+}
+Tensor operator-(Tensor t, double num) {
+	for(int i = 0; i < t.data.size(); i++) {
+		t.data.at(i) -= num;
+	}
+	return t;
+}
+Tensor operator+(Tensor t, double num) {
+	for(int i = 0; i < t.data.size(); i++) {
+		t.data.at(i) += num;
+	}
+	return t;
+}
+Tensor array2Tensor(double* array, unsigned int size) {
+	Tensor t = EmptyTensor({size});
+	for(unsigned int i = 0; i < size; i++) {
+		t.data.at(i) = array[i];
+	}
+	return t;
+}

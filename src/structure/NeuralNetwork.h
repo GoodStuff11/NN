@@ -3,16 +3,17 @@
 #include "../data types/list.h"
 #include "activation functions.h" //so that main doesn't have to include this
 #include "../data types/DataFrame.h"
+#include "../data types/Tensor.h"
 #include "Layer.h"
 
 class NeuralNetwork {
 private:
 	list<Layer*>* model;
-	Vector(*loss_function)(Vector, Vector);
-	Vector* calculate_nodes(Vector input);
+	Tensor(*loss_function)(Tensor, Tensor);
+	Tensor* calculate_nodes(Tensor input);
 public:
 	void set_loss_function(std::string function);
-	Vector predict(Vector input);
+	Tensor predict(Tensor input);
 	NeuralNetwork();
 	virtual ~NeuralNetwork();
 	void add_layer(Layer* new_layer);

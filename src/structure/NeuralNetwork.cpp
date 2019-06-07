@@ -18,7 +18,7 @@ void NeuralNetwork::set_loss_function(std::string function) {
 	else if(function == "MAE")
 		this->loss_function = &MAE;
 }
-Vector NeuralNetwork::predict(Vector input) {
+Tensor NeuralNetwork::predict(Tensor input) {
 	for(int i = 0; i < model->size(); i++) {
 		cout << input << "\n\n";
 		input = model->valAt(i)->call(input);
@@ -26,8 +26,8 @@ Vector NeuralNetwork::predict(Vector input) {
 	return input;
 }
 // same as predict but returns all node values
-Vector* NeuralNetwork::calculate_nodes(Vector input) {
-	Vector* nodes = new Vector[model->size()];
+Tensor* NeuralNetwork::calculate_nodes(Tensor input) {
+	Tensor* nodes = new Tensor[model->size()];
 
 	for(int i = 0; i < model->size() - 1; i++) {
 		nodes[i] = input;
@@ -46,17 +46,17 @@ void NeuralNetwork::build(std::string function) {
 // TODO: implement batch size and a return value so that progress can be plotted
 // for each row, I adjusted the weights. I did NOT take the average and adjust them with that
 void NeuralNetwork::fit(DataFrame& train_data, DataFrame& train_labels, unsigned int epochs) {
-	// a row in train_data and train_labels are the input and output vectors respectively
+	// a row in train_data and train_labels are the input and output Tensors respectively
 	for(unsigned int i = 0; i < epochs; i++) {
 		for(unsigned int row = 0; row < train_data.get_rows(); row++) {
 			unsigned int size = model->size();
 
-			//Vector output = predict(array2vector(train_data[row], train_data.get_columns()));
-			Vector* nodes = calculate_nodes(array2vector(train_data[row], train_data.get_columns()));
-			Vector expected_output = array2vector(train_labels[row], train_labels.get_columns());
-			Vector error = loss_function(nodes[size - 1], expected_output);
+			//Tensor output = predict(array2Tensor(train_data[row], train_data.get_columns()));
+			Tensor* nodes = calculate_nodes(array2Tensor(train_data[row], train_data.get_columns()));
+			Tensor expected_output = array2Tensor(train_labels[row], train_labels.get_columns());
+			Tensor error = loss_function(nodes[size - 1], expected_output);
 
-			Vector s = model->valAt(size - 1)->calculate_s(error, nodes[size - 1]);
+			Tensor s = model->valAt(size - 1)->calculate_s(error, nodes[size - 1]);
 
 			for(int layer_number = size - 2; layer_number > 0; layer_number--) {
 				Layer* current_layer = model->valAt(layer_number);

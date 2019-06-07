@@ -2,104 +2,104 @@
 #include <cmath>
 #include <iostream>
 namespace af {
-	Vector softmax(Vector v) {
+	Tensor softmax(Tensor v) {
 		double sum = 0;
-		for(unsigned int i = 0; i < v.get_size(); i++)
-			sum += exp(v(i));
-		for(unsigned int i = 0; i < v.get_size(); i++)
-			v(i) = exp(v(i)) * sum;
+		for(unsigned int i = 0; i < v.get_dim(0); i++)
+			sum += exp(v({i}));
+		for(unsigned int i = 0; i < v.get_dim(0); i++)
+			v({i}) = exp(v({i})) * sum;
 		return v;
 	}
-	Vector sigmoid(Vector v) {
-		for(unsigned int i = 0; i < v.get_size(); i++)
-			v(i) = 1 / (exp(-v(i)) + 1);
+	Tensor sigmoid(Tensor v) {
+		for(unsigned int i = 0; i < v.get_dim(0); i++)
+			v({i}) = 1 / (exp(-v({i})) + 1);
 		return v;
 	}
-	Vector softplus(Vector v) {
-		for(unsigned int i = 0; i < v.get_size(); i++)
-			v(i) = log(1 + exp(v(i)));
+	Tensor softplus(Tensor v) {
+		for(unsigned int i = 0; i < v.get_dim(0); i++)
+			v({i}) = log(1 + exp(v({i})));
 		return v;
 	}
-	Vector tanh(Vector v) {
-		for(unsigned int i = 0; i < v.get_size(); i++)
-			v(i) = std::tanh(v(i));
+	Tensor tanh(Tensor v) {
+		for(unsigned int i = 0; i < v.get_dim(0); i++)
+			v({i}) = std::tanh(v({i}));
 		return v;
 	}
-	Vector relu(Vector v) {
-		for(unsigned int i = 0; i < v.get_size(); i++) {
-			double val = v(i);
+	Tensor relu(Tensor v) {
+		for(unsigned int i = 0; i < v.get_dim(0); i++) {
+			double val = v({i});
 			if(val < 0)
-				v(i) = 0;
+				v({i}) = 0;
 			else
-				v(i) = val;
+				v({i}) = val;
 		}
 		return v;
 	}
-	Vector elu(Vector v) {
-		for(unsigned int i = 0; i < v.get_size(); i++) {
-			double val = v(i);
+	Tensor elu(Tensor v) {
+		for(unsigned int i = 0; i < v.get_dim(0); i++) {
+			double val = v({i});
 			if(val < 0)
-				v(i) = 0.5 * (exp(val) - 1);
+				v({i}) = 0.5 * (exp(val) - 1);
 			else
-				v(i) = val;
+				v({i}) = val;
 		}
 		return v;
 	}
-	Vector leaky_relu(Vector v) {
-		for(unsigned int i = 0; i < v.get_size(); i++) {
-			double val = v(i);
+	Tensor leaky_relu(Tensor v) {
+		for(unsigned int i = 0; i < v.get_dim(0); i++) {
+			double val = v({i});
 			if(val < 0)
-				v(i) = 0.5 * val;
+				v({i}) = 0.5 * val;
 			else
-				v(i) = val;
+				v({i}) = val;
 		}
 		return v;
 	}
-	Vector step(Vector v) {
-		for(unsigned int i = 0; i < v.get_size(); i++) {
-			if(v(i) < 0)
-				v(i) = 0;
+	Tensor step(Tensor v) {
+		for(unsigned int i = 0; i < v.get_dim(0); i++) {
+			if(v({i}) < 0)
+				v({i}) = 0;
 			else
-				v(i) = 1;
+				v({i}) = 1;
 		}
 		return v;
 	}
-	Vector none(Vector v) {
+	Tensor none(Tensor v) {
 		return v;
 	}
 
-	Matrix softmax_derivative(Vector v) {
-		Vector u = softmax(v);
-		Matrix output = Matrix(u.get_size(), v.get_size());
-		for(unsigned int i = 0; i < u.get_size(); i++) {
-			for(unsigned int j = 0; j < v.get_size(); j++) {
+	Tensor softmax_derivative(Tensor v) {
+		Tensor u = softmax(v);
+		Tensor output = EmptyTensor({v.get_dim(0), v.get_dim(0)});
+		for(unsigned int i = 0; i < v.get_dim(0); i++) {
+			for(unsigned int j = 0; j < v.get_dim(0); j++) {
 				if(i != j)
-					output(i, j) = -u(i) * u(j);
+					output({i, j}) = -u({i}) * u({j});
 				else
-					output(i, i) = u(i) * (1 - u(i));
+					output({i, i}) = u({i}) * (1 - u({i}));
 			}
 		}
 		return output;
 	}
-	Matrix relu_derivative(Vector v) {
-		Matrix m = IdentityMatrix(v.get_size());
-		for(unsigned int i = 0; i < v.get_size(); i++) {
-			if(v(i) > 0)
-				m(i, i) = 1;
+	Tensor relu_derivative(Tensor v) {
+		Tensor m = EmptyTensor({v.get_dim(0),v.get_dim(0)});
+		for(unsigned int i = 0; i < v.get_dim(0); i++) {
+			if(v({i}) > 0)
+				m({i, i}) = 1;
 			else
-				m(i, i) = 0;
+				m({i, i}) = 0;
 		}
 		return m;
 	}
-	Matrix step_derivative(Vector v) {
+	Tensor step_derivative(Tensor v) {
 		// it's better to not use this function for optimization
-		return Matrix(v.get_size(), v.get_size());
+		return EmptyTensor({v.get_dim(0), v.get_dim(0)});
 	}
-	Matrix sigmoid_derivative(Vector v) {
-		return sigmoid(v) * transpose(1 - v);
+	Tensor sigmoid_derivative(Tensor v) {
+		return tensor_product(sigmoid(v), 1 - v);
 	}
-	Matrix none_derivative(Vector v) {
-		return IdentityMatrix(v.get_size());
+	Tensor none_derivative(Tensor v) {
+		return EmptyTensor({v.get_dim(0),v.get_dim(0)});
 	}
 
 }
