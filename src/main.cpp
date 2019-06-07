@@ -1,5 +1,5 @@
 #include "data types/DataFrame.h"
-#include "NeuralNetwork.h"
+#include "structure/NeuralNetwork.h"
 #include <iostream>
 #include <stdlib.h>
 #include "data types/Matrix.h"

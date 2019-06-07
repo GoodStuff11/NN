@@ -4,11 +4,12 @@
 #include <vector>
 #include <ostream>
 class Tensor {
+protected:
 	std::vector<double> data;
 	std::vector<unsigned int> dim;
 	unsigned int tensor_degree;
 	bool reversed;
-
+private:
 	void args_helper(std::vector<int>& v, unsigned int& index, int val) {
 		if(index < v.size()) {
 			v.at(index++) = val;
@@ -39,9 +40,10 @@ public:
 		dim = {};
 		tensor_degree = 0;
 		reversed = 1;
+		data = {};
 	}
 	Tensor(std::initializer_list<double> l): data(l) {
-		dim = {l.size()};
+		dim = {(unsigned int)l.size()};
 		tensor_degree = 1;
 		reversed = 1;
 	}
@@ -54,6 +56,9 @@ public:
 		return operator()(args2vector(args...));
 	}
 	Tensor& operator=(Tensor const& t);
+	friend Tensor operator+(Tensor t1, Tensor& t2);
+	friend Tensor operator-(Tensor t1, Tensor& t2);
+	friend Tensor operator*(double num, Tensor t);
 	friend Tensor EmptyTensor(std::vector<unsigned int>dim);
 	friend Tensor dot(Tensor t1, Tensor t2);
 	friend Tensor tensor_product(Tensor& t1, Tensor& t2);
@@ -62,4 +67,5 @@ public:
 
 };
 extern Tensor EmptyTensor(std::vector<unsigned int>dim);
+
 #endif

@@ -1,7 +1,7 @@
 #ifndef ACTIVATION_FUNCTIONS_H_
 #define ACTIVATION_FUNCTIONS_H_
 
-#include "data types/Matrix.h"
+#include "../data types/Matrix.h"
 #include <string>
 
 namespace af {

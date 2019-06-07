@@ -1,4 +1,4 @@
-#include "data types/Matrix.h"
+#include "../data types/Matrix.h"
 #include <iostream>
 #include <string>
 //https://www.geeksforgeeks.org/virtual-function-cpp/

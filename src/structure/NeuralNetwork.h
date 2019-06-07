@@ -1,8 +1,8 @@
 #ifndef NEURALNETWORK_H_
 #define NEURALNETWORK_H_
-#include "data types/list.h"
+#include "../data types/list.h"
 #include "activation functions.h" //so that main doesn't have to include this
-#include "data types/DataFrame.h"
+#include "../data types/DataFrame.h"
 #include "Layer.h"
 
 class NeuralNetwork {
