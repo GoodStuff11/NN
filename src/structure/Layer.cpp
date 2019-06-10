@@ -45,9 +45,8 @@ dense::dense(unsigned int output) {
 	activation_function_derivative = &af::none_derivative;
 	nodes = output;
 	biases = EmptyTensor({nodes});
-	for(unsigned int i = 0; i < biases.get_dim(0); i++) {
-		biases({i}) = 1;
-	}
+	for(unsigned int i = 0; i < biases.get_dim(0); i++) 
+		biases({i}) = ((double) rand() / (RAND_MAX));
 }
 
 dense::dense(unsigned int output_nodes, std::string function) {
@@ -55,16 +54,18 @@ dense::dense(unsigned int output_nodes, std::string function) {
 	decodeActivationFunction(function);
 	nodes = output_nodes;
 	biases = EmptyTensor({nodes}); 
-	for(unsigned int i = 0; i < biases.get_dim(0); i++) {
-		biases({i}) = 1;
-	}
-
+	for(unsigned int i = 0; i < biases.get_dim(0); i++) 
+		biases({i}) = ((double) rand() / (RAND_MAX));
+	
 }
 void dense::build(Layer* previous_layer) {
 	unsigned int other_nodes = previous_layer->getNodes();
 	if(other_nodes == 0)
 		other_nodes = nodes;
-	weights = EmptyTensor({nodes, other_nodes});
+	weights = EmptyTensor({nodes * other_nodes});
+	for (int i = 0; i < weights.get_dim(0); i++)
+		weights({i}) = ((double) rand() / (RAND_MAX));
+	weights.reshape({nodes, other_nodes});
 }
 Tensor dense::call(Tensor input) {
 	return activation_function(dot(weights, input) + biases);
