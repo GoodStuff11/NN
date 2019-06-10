@@ -129,7 +129,7 @@ Tensor operator+(Tensor t1, Tensor& t2) {
 		throw runtime_error("Tensor dimensions are not equal");
 	}
 	for(int i = 0; i < t1.data.size(); i++) {
-		t1.data.at(i) += t1.data.at(i);
+		t1.data.at(i) += t2.data.at(i);
 	}
 	return t1;
 }
@@ -138,7 +138,7 @@ Tensor operator-(Tensor t1, Tensor& t2) {
 		throw runtime_error("Tensor dimensions are not equal");
 	}
 	for(int i = 0; i < t1.data.size(); i++) {
-		t1.data.at(i) -= t1.data.at(i);
+		t1.data.at(i) -= t2.data.at(i);
 	}
 	return t1;
 }

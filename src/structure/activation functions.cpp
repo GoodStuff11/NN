@@ -84,7 +84,7 @@ namespace af {
 	Tensor relu_derivative(Tensor v) {
 		Tensor m = EmptyTensor({v.get_dim(0),v.get_dim(0)});
 		for(unsigned int i = 0; i < v.get_dim(0); i++) {
-			if(v({i}) > 0)
+			if(v({i}) >= 0)
 				m({i, i}) = 1;
 			else
 				m({i, i}) = 0;

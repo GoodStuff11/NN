@@ -2,6 +2,8 @@
 #include <iostream>
 #include "activation functions.h"
 
+using namespace std;
+
 unsigned int Layer::getNodes() const {
 	return nodes;
 }
@@ -43,13 +45,20 @@ dense::dense(unsigned int output) {
 	activation_function_derivative = &af::none_derivative;
 	nodes = output;
 	biases = EmptyTensor({nodes});
+	for(unsigned int i = 0; i < biases.get_dim(0); i++) {
+		biases({i}) = 1;
+	}
 }
 
 dense::dense(unsigned int output_nodes, std::string function) {
 	// activation functions that do not have a derivative are not yet implemented and aren't yet supported
 	decodeActivationFunction(function);
 	nodes = output_nodes;
-	biases = EmptyTensor({nodes});
+	biases = EmptyTensor({nodes}); 
+	for(unsigned int i = 0; i < biases.get_dim(0); i++) {
+		biases({i}) = 1;
+	}
+
 }
 void dense::build(Layer* previous_layer) {
 	unsigned int other_nodes = previous_layer->getNodes();
@@ -58,18 +67,14 @@ void dense::build(Layer* previous_layer) {
 	weights = EmptyTensor({nodes, other_nodes});
 }
 Tensor dense::call(Tensor input) {
-	return activation_function(dot(weights,input) + biases);
+	return activation_function(dot(weights, input) + biases);
 }
 Tensor Layer::calculate_s(Tensor error, Tensor nodes) const {
-	std::cout << activation_function_derivative(nodes) << std::endl;
-	return dot(error,activation_function_derivative(nodes));
+	return dot(error, activation_function_derivative(nodes));
 }
 Tensor dense::update(Tensor s, Tensor nodes) {
-	const double training_rate = 0.1;
-	std::cout << s << "WATER" << std::endl;
 	Tensor new_s = dot(s, dot(weights, activation_function_derivative(nodes)));
-
-	weights = weights - training_rate * tensor_product(s,nodes);
+	weights = weights - training_rate * tensor_product(s, nodes);
 	biases = biases - training_rate * s;
 	return new_s;
 }

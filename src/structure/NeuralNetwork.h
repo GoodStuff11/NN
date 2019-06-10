@@ -8,11 +8,14 @@
 
 class NeuralNetwork {
 private:
-	list<Layer*>* model;
+	double training_rate;
 	Tensor(*loss_function)(Tensor, Tensor);
 	Tensor* calculate_nodes(Tensor input);
-public:
 	void set_loss_function(std::string function);
+public:
+	friend class Layer;
+	list<Layer*>* layers;
+	void set_training_rate(double rate);
 	Tensor predict(Tensor input);
 	NeuralNetwork();
 	virtual ~NeuralNetwork();

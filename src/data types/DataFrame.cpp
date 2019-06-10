@@ -135,6 +135,8 @@ void DataFrame::read_binary_file(std::string name) {
 	std::ifstream file(name, ios::binary);
 	file.read(( char*) & rows, sizeof(int));
 	file.read(( char*) & columns, sizeof(int));
+	if(file.fail())
+		cout << "ERROR OPENING FILE" << endl;
 
 	data = new double* [rows];
 	for(unsigned int row = 0; row < rows; row++) {
