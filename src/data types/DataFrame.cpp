@@ -180,33 +180,36 @@ void csv2binary(std::string input, std::string output) {
 	stringstream ss(headings);
 	while(getline(ss, line, ',')) {
 		value = stod(line);
+		cout << "CONVERTED TO DOUBLE" << endl;
 		outputfile.write(( char*) & value, sizeof(double));
-		//cout << line << ' ';
+		cout << "BINARY WRITTEN" << endl;
 	}
 	//cout << endl;
-
+	cout << "FIRST LINE" << endl;
 	// based on the amount of columns, parse up to
 	// the ',' character and at end of line parse '\n'
 	while(inputfile.good()) {
 		for(int i = 0; i < columns - 1; i++) {
 			getline(inputfile, line, ',');
 			value = stod(line);
+			cout << "CONVERTED TO DOUBLE" << endl;
 			outputfile.write(( char*) & value, sizeof(double));
-			//cout << line << " ";
+			cout << "BINARY WRITTEN" << endl;
 		}
 		getline(inputfile, line, '\n');
-		//cout << line << endl;
+
 		value = stod(line);
 		outputfile.write(( char*) & value, sizeof(double));
 		if(inputfile.fail())
 			break;
 		rows++;
 	}
+	cout << "DONE" << endl;
 	// write rows and columns to the start of the file
 	outputfile.seekp(0, ios_base::beg);
 	outputfile.write(( char*) & rows, sizeof(int));
 	outputfile.write(( char*) & columns, sizeof(int));
-
+	cout << "OTHER INFO" << "\n\n";
 	outputfile.close();
 	inputfile.close();
 

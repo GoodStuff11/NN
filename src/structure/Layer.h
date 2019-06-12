@@ -8,6 +8,11 @@ public:
 	unsigned int getNodes() const;
 	friend class NeuralNetwork; // allow access to build()
 	virtual void set_activation_function(std::string str) { decodeActivationFunction(str); }
+	
+	virtual Tensor get_weights() { return Tensor(); }
+	virtual void set_weights(Tensor weights) {};
+	virtual Tensor get_biases() { return Tensor(); }
+	virtual void set_biases(Tensor biases) {};
 protected:
 	double training_rate;
 	unsigned int nodes;
@@ -21,7 +26,7 @@ protected:
 	virtual Tensor update(Tensor s, Tensor nodes) { return Tensor(); }
 	virtual void build(Layer* previous_layer) {}
 	
-	virtual void print() {};
+	
 };
 class dense: public Layer {
 	Tensor weights;
@@ -35,7 +40,12 @@ public:
 
 	Tensor update(Tensor s, Tensor nodes);
 	void build(Layer* previous_layer);
-	virtual void print() { std::cout << weights << std::endl; }
+
+	virtual Tensor get_weights() { return weights; }
+	virtual void set_weights(Tensor weights) { this->weights = weights; }
+	virtual Tensor get_biases() { return biases; }
+	virtual void set_biases(Tensor biases) { this->biases = biases; }
+
 	virtual void set_activation_function(std::string str) { decodeActivationFunction(str); }
 };
 class input: public Layer {
@@ -47,7 +57,12 @@ public:
 	Tensor call(Tensor input) { return Tensor(); }
 	Tensor update(Tensor s, Tensor nodes) { return Tensor(); }
 	void build(Layer* previous_layer) {}
-	virtual void print() {};
+
+	virtual Tensor get_weights() { return Tensor(); }
+	virtual void set_weights(Tensor weights) {};
+	virtual Tensor get_biases() { return Tensor(); }
+	virtual void set_biases(Tensor biases) {};
+
 	virtual void set_activation_function(std::string str) { }
 };
 class activation: public Layer {
@@ -58,6 +73,11 @@ public:
 
 	Tensor update(Tensor s, Tensor nodes) { return s; }
 	void build(Layer* previous_layer) {}
-	virtual void print() {};
+
+	virtual Tensor get_weights() { return Tensor(); }
+	virtual void set_weights(Tensor weights) {};
+	virtual Tensor get_biases() { return Tensor(); }
+	virtual void set_biases(Tensor biases) {};
+
 	virtual void set_activation_function(std::string str) { decodeActivationFunction(str); }
 };

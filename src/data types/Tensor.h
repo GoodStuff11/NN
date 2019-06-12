@@ -71,7 +71,7 @@ public:
 	friend Tensor dot(Tensor t1, Tensor t2);
 	friend Tensor tensor_product(Tensor& t1, Tensor& t2);
 	friend std::ostream& operator<<(std::ostream& os, Tensor t);
-	void reshape(std::vector<unsigned int> dim);
+	Tensor& reshape(std::vector<unsigned int> dim);
 
 };
 extern Tensor EmptyTensor(std::vector<unsigned int>dim);

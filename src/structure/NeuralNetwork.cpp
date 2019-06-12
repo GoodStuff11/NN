@@ -6,6 +6,11 @@ NeuralNetwork::NeuralNetwork() {
 	loss_function = &MSE;
 	training_rate = 0.5;
 }
+NeuralNetwork::NeuralNetwork(double training_rate) {
+	layers = new list<Layer*>();
+	loss_function = &MSE;
+	this->training_rate = training_rate;
+}
 NeuralNetwork::~NeuralNetwork() {
 	delete layers;
 }
@@ -22,6 +27,7 @@ void NeuralNetwork::set_loss_function(std::string function) {
 		this->loss_function = &MAE;
 }
 Tensor NeuralNetwork::predict(Tensor input) {
+	
 	for(int i = 1; i < layers->size(); i++) {
 		input = layers->valAt(i)->call(input);
 	}
@@ -57,8 +63,9 @@ void NeuralNetwork::fit(DataFrame& train_data, DataFrame& train_labels, unsigned
 			Tensor expected_output = array2Tensor(train_labels[row], train_labels.get_columns());
 			Tensor error = loss_function(nodes[size - 1], expected_output);
 			Tensor s = layers->valAt(size - 1)->calculate_s(error, nodes[size - 1]);
-
+			
 			for(int layer_number = size - 1; layer_number > 0; layer_number--) {
+
 				Layer* current_layer = layers->valAt(layer_number);
 				s = current_layer->update(s, nodes[layer_number - 1]);
 			}

@@ -65,9 +65,10 @@ std::vector<unsigned int> Tensor::reshape_matrix(bool left) {
 	tensor_degree = 2;
 	return old_dim;
 }
-void Tensor::reshape(std::vector<unsigned int> dim) {
+Tensor& Tensor::reshape(std::vector<unsigned int> dim) {
 	this->dim = dim;
 	tensor_degree = dim.size();
+	return *this;
 }
 Tensor Tensor::matrix_mul(Tensor& t1, Tensor& t2) {
 	Tensor t = EmptyTensor({t1.get_dim(0), t2.get_dim(1)});

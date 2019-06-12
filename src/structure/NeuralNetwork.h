@@ -18,6 +18,7 @@ public:
 	void set_training_rate(double rate);
 	Tensor predict(Tensor input);
 	NeuralNetwork();
+	NeuralNetwork(double training_rate);
 	virtual ~NeuralNetwork();
 	void add_layer(Layer* new_layer);
 	void build(std::string function);
