@@ -190,7 +190,11 @@ void csv2binary(std::string input, std::string output) {
 	while(inputfile.good()) {
 		for(int i = 0; i < columns - 1; i++) {
 			getline(inputfile, line, ',');
-			value = stod(line);
+            try {
+		    	value = stod(line);
+            } catch (const std::exception& e){
+                goto end_loop;   
+            }
 			outputfile.write(( char*) & value, sizeof(double));
 			//cout << line << " ";
 		}
@@ -202,6 +206,7 @@ void csv2binary(std::string input, std::string output) {
 			break;
 		rows++;
 	}
+	end_loop:
 	// write rows and columns to the start of the file
 	outputfile.seekp(0, ios_base::beg);
 	outputfile.write(( char*) & rows, sizeof(int));
