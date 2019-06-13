@@ -1,5 +1,7 @@
 #include "NeuralNetwork.h"
 #include "loss functions.h"
+#include <fstream>
+using namespace std;
 
 NeuralNetwork::NeuralNetwork() {
 	layers = new list<Layer*>();
@@ -27,8 +29,9 @@ void NeuralNetwork::set_loss_function(std::string function) {
 		this->loss_function = &MAE;
 }
 Tensor NeuralNetwork::predict(Tensor input) {
-	
+	//cout << "PREDICT:" << endl;
 	for(int i = 1; i < layers->size(); i++) {
+		//cout << input << endl;
 		input = layers->valAt(i)->call(input);
 	}
 	return input;
@@ -55,6 +58,7 @@ void NeuralNetwork::build(std::string function) {
 // for each row, I adjusted the weights. I did NOT take the average and adjust them with that
 void NeuralNetwork::fit(DataFrame& train_data, DataFrame& train_labels, unsigned int epochs) {
 	// a row in train_data and train_labels are the input and output Tensors respectively
+	ofstream file("C:/Users/htpc/Source/Repos/GoodStuff11/Neural-Network/src/fit output.txt");
 	for(unsigned int i = 0; i < epochs; i++) {
 		for(unsigned int row = 0; row < train_data.get_rows(); row++) {
 			unsigned int size = layers->size();
@@ -62,6 +66,8 @@ void NeuralNetwork::fit(DataFrame& train_data, DataFrame& train_labels, unsigned
 			Tensor* nodes = calculate_nodes(array2Tensor(train_data[row], train_data.get_columns()));
 			Tensor expected_output = array2Tensor(train_labels[row], train_labels.get_columns());
 			Tensor error = loss_function(nodes[size - 1], expected_output);
+			file << error;
+			cout << error;
 			Tensor s = layers->valAt(size - 1)->calculate_s(error, nodes[size - 1]);
 			
 			for(int layer_number = size - 1; layer_number > 0; layer_number--) {
@@ -71,6 +77,7 @@ void NeuralNetwork::fit(DataFrame& train_data, DataFrame& train_labels, unsigned
 			}
 		}
 	}
+	file.close();
 }
 void NeuralNetwork::set_training_rate(double rate) {
 	training_rate = rate;

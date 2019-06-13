@@ -12,7 +12,7 @@ DataFrame::DataFrame(unsigned int rows, unsigned int columns) {
 	this->columns = columns;
 	this->rows = rows;
 
-	data = new double* [rows];
+	data = new double *[rows];
 	for(unsigned int i = 0; i < rows; i++)
 		data[i] = new double[columns];
 
@@ -23,20 +23,20 @@ DataFrame::~DataFrame() {
 	}
 	delete data;
 }
-double& DataFrame::operator()(unsigned int row, unsigned int column) {
+double &DataFrame::operator()(unsigned int row, unsigned int column) {
 	return data[row][column];
 }
-double* DataFrame::operator[](unsigned int row) {
+double *DataFrame::operator[](unsigned int row) {
 	return data[row];
 }
 void DataFrame::swap(unsigned int row1, unsigned int row2) {
-	double* temp = data[row1];
+	double *temp = data[row1];
 	data[row1] = data[row2];
 	data[row2] = temp;
 }
 
 int DataFrame::Partition(int column, int left, int right) {
-	double* pivot = data[right];
+	double *pivot = data[right];
 	int i = left;
 
 	for(int j = left; j < right; ++j) {
@@ -99,7 +99,7 @@ void DataFrame::InsertionSort(int column) {
 	for(unsigned int i = 1; i < columns; i++) {
 		int j;
 
-		double* key = data[i];
+		double *key = data[i];
 		j = i - 1;
 
 		while(j >= 0 && data[j][column] > key[column]) {
@@ -133,27 +133,27 @@ unsigned int DataFrame::get_rows() {
 void DataFrame::read_binary_file(std::string name) {
 	// make use of seekg
 	std::ifstream file(name, ios::binary);
-	file.read(( char*) & rows, sizeof(int));
-	file.read(( char*) & columns, sizeof(int));
+	file.read(( char *) & rows, sizeof(int));
+	file.read(( char *) & columns, sizeof(int));
 	if(file.fail())
 		cout << "ERROR OPENING FILE" << endl;
 
-	data = new double* [rows];
+	data = new double *[rows];
 	for(unsigned int row = 0; row < rows; row++) {
 		data[row] = new double[columns];
 
 		for(unsigned int column = 0; column < columns; column++) {
-			file.read(( char*) & data[row][column], sizeof(double));
+			file.read(( char *) & data[row][column], sizeof(double));
 		}
 	}
 	file.close();
 }
-DataFrame* read_binary_file(std::string name) {
-	DataFrame* df = new DataFrame();
+DataFrame *read_binary_file(std::string name) {
+	DataFrame *df = new DataFrame();
 	df->read_binary_file(name);
 	return df;
 }
-DataFrame* DataFrame::operator=(DataFrame* df) {
+DataFrame *DataFrame::operator=(DataFrame *df) {
 	rows = df->rows;
 	columns = df->columns;
 	data = df->data;
@@ -166,6 +166,7 @@ void csv2binary(std::string input, std::string output) {
 	string headings;
 	int columns = 1;
 	int rows = 1;
+
 
 	// get one line and find the amount of columns in it
 	outputfile.seekp(2 * sizeof(int), ios_base::beg);
@@ -180,37 +181,41 @@ void csv2binary(std::string input, std::string output) {
 	stringstream ss(headings);
 	while(getline(ss, line, ',')) {
 		value = stod(line);
-		outputfile.write(( char*) & value, sizeof(double));
-		//cout << line << ' ';
+		outputfile.write(( char *) & value, sizeof(double));
 	}
-	//cout << endl;
 
 	// based on the amount of columns, parse up to
 	// the ',' character and at end of line parse '\n'
 	while(inputfile.good()) {
 		for(int i = 0; i < columns - 1; i++) {
 			getline(inputfile, line, ',');
-            try {
-		    	value = stod(line);
-            } catch (const std::exception& e){
-                goto end_loop;   
-            }
-			outputfile.write(( char*) & value, sizeof(double));
+			try {
+				value = stod(line);
+			}
+			catch(const std::exception &e) {
+				goto end_loop;
+			}
+			outputfile.write(( char *) & value, sizeof(double));
 			//cout << line << " ";
 		}
 		getline(inputfile, line, '\n');
 		//cout << line << endl;
-		value = stod(line);
-		outputfile.write(( char*) & value, sizeof(double));
+		try {
+			value = stod(line);
+		}
+		catch(const std::exception &e) {
+			break;
+		}
+		outputfile.write(( char *) & value, sizeof(double));
 		if(inputfile.fail())
 			break;
 		rows++;
 	}
-	end_loop:
+end_loop:
 	// write rows and columns to the start of the file
 	outputfile.seekp(0, ios_base::beg);
-	outputfile.write(( char*) & rows, sizeof(int));
-	outputfile.write(( char*) & columns, sizeof(int));
+	outputfile.write(( char *) & rows, sizeof(int));
+	outputfile.write(( char *) & columns, sizeof(int));
 
 	outputfile.close();
 	inputfile.close();
@@ -221,11 +226,11 @@ void csv2binary(string input) {
 	csv2binary(input, input.substr(0, input.find('.')) + ".bin");
 }
 
-ostream& operator<<(ostream& os, const DataFrame* df) {
+ostream &operator<<(ostream &os, const DataFrame *df) {
 	for(unsigned int i = 0; i < df->rows; i++) {
 		for(unsigned int j = 0; j < df->columns; j++)
-			cout << df->data[i][j] << ' ';
-		cout << endl;
+			os << df->data[i][j] << ' ';
+		os << endl;
 	}
 	return os;
 }

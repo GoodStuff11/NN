@@ -108,12 +108,12 @@ Tensor dot(Tensor t1, Tensor t2) {
 }
 std::ostream& operator<<(std::ostream& os, Tensor t) {
 	for(unsigned int i = 0; i < t.data.size(); i++) {
-		std::cout << t.data.at(i) << ' ';
+		os << t.data.at(i) << ' ';
 		int divis = 1;
 		for(unsigned int k = 0; k < t.tensor_degree; k++) {
 			divis *= t.get_dim(t.tensor_degree - k - 1);
 			if((i + 1) % divis == 0)
-				std::cout << '\n';
+				os << '\n';
 		}
 	}
 	return os;
