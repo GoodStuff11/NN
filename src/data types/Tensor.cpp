@@ -10,24 +10,24 @@ Tensor EmptyTensor(std::vector<unsigned int>dim) {
 	t.reversed = 1;
 
 	int values = 1;
-	for(unsigned int i = 0; i < t.tensor_degree; i++) {
+	for (unsigned int i = 0; i < t.tensor_degree; i++) {
 		values *= dim.at(i);
 	}
 	t.data = std::vector<double>(values, 0);
 	return t;
 }
 double& Tensor::operator()(std::vector<unsigned int>v) {
-	if(v.size() != tensor_degree) {
+	if (v.size() != tensor_degree) {
 		throw runtime_error("Tensor () operator expected " + std::to_string(tensor_degree) + " inputs. Recieved " + std::to_string(v.size()));
 	}
 	// {x,y,z}
 	unsigned int index = 0;
-	if(reversed) { // (row, column)
+	if (reversed) { // (row, column)
 		// x*Y*Z + y*Z + z
-		for(int i = tensor_degree - 1; i >= 0; i--) {
+		for (int i = tensor_degree - 1; i >= 0; i--) {
 			int temp = v.at(i);
-			if(temp != 0) {
-				for(unsigned int j = i + 1; j < tensor_degree; j++) {
+			if (temp != 0) {
+				for (unsigned int j = i + 1; j < tensor_degree; j++) {
 					temp *= dim.at(j);
 				}
 			}
@@ -36,10 +36,10 @@ double& Tensor::operator()(std::vector<unsigned int>v) {
 	}
 	else { // (x,y,z)
 	   // z*Y*X + y*X + x
-		for(unsigned int i = 0; i < tensor_degree; i++) {
+		for (unsigned int i = 0; i < tensor_degree; i++) {
 			int temp = v.at(i);
-			if(temp != 0) {
-				for(int j = i - 1; j >= 0; j--) {
+			if (temp != 0) {
+				for (int j = i - 1; j >= 0; j--) {
 					temp *= dim.at(j);
 				}
 			}
@@ -54,13 +54,13 @@ double& Tensor::operator()(std::vector<unsigned int>v) {
 std::vector<unsigned int> Tensor::reshape_matrix(bool left) {
 	unsigned int val = 1;
 	std::vector<unsigned int> old_dim = dim;
-	for(unsigned int i = 1 - left; i < tensor_degree - left; i++)
+	for (unsigned int i = 1 - left; i < tensor_degree - left; i++)
 		val *= dim.at(i);
 
-	if(left)
-		dim = {val,dim.at(tensor_degree - 1)};
+	if (left)
+		dim = { val,dim.at(tensor_degree - 1) };
 	else
-		dim = {dim.at(0), val};
+		dim = { dim.at(0), val };
 
 	tensor_degree = 2;
 	return old_dim;
@@ -71,14 +71,14 @@ Tensor& Tensor::reshape(std::vector<unsigned int> dim) {
 	return *this;
 }
 Tensor Tensor::matrix_mul(Tensor& t1, Tensor& t2) {
-	Tensor t = EmptyTensor({t1.get_dim(0), t2.get_dim(1)});
-	for(unsigned int i = 0; i < t1.dim.at(0); i++) {
-		for(unsigned int j = 0; j < t2.dim.at(1); j++) {
+	Tensor t = EmptyTensor({ t1.get_dim(0), t2.get_dim(1) });
+	for (unsigned int i = 0; i < t1.dim.at(0); i++) {
+		for (unsigned int j = 0; j < t2.dim.at(1); j++) {
 			double sum = 0;
-			for(unsigned int k = 0; k < t1.dim.at(1); k++) {
-				sum += t1({i, k}) * t2({k, j});
+			for (unsigned int k = 0; k < t1.dim.at(1); k++) {
+				sum += t1({ i, k }) * t2({ k, j });
 			}
-			t({i, j}) = sum;
+			t({ i, j }) = sum;
 		}
 	}
 	return t;
@@ -90,8 +90,8 @@ Tensor tensor_product(Tensor& t1, Tensor& t2) {
 	int size1 = t1.data.size();
 	int size2 = t2.data.size();
 	Tensor t = EmptyTensor(dim);
-	for(int i = 0; i < size1; i++)
-		for(int j = 0; j < size2; j++)
+	for (int i = 0; i < size1; i++)
+		for (int j = 0; j < size2; j++)
 			t.data.at(i * size2 + j) = t1.data.at(i) * t2.data.at(j);
 	return t;
 }
@@ -107,12 +107,12 @@ Tensor dot(Tensor t1, Tensor t2) {
 	return t;
 }
 std::ostream& operator<<(std::ostream& os, Tensor t) {
-	for(unsigned int i = 0; i < t.data.size(); i++) {
+	for (unsigned int i = 0; i < t.data.size(); i++) {
 		os << t.data.at(i) << ' ';
 		int divis = 1;
-		for(unsigned int k = 0; k < t.tensor_degree; k++) {
+		for (unsigned int k = 0; k < t.tensor_degree; k++) {
 			divis *= t.get_dim(t.tensor_degree - k - 1);
-			if((i + 1) % divis == 0)
+			if ((i + 1) % divis == 0)
 				os << '\n';
 		}
 	}
@@ -126,57 +126,79 @@ Tensor& Tensor::operator=(Tensor const& t) {
 	return *this;
 }
 Tensor operator+(Tensor t1, Tensor& t2) {
-	if(t1.dim != t2.dim) {
+	if (t1.dim != t2.dim) {
 		throw runtime_error("Tensor dimensions are not equal");
 	}
-	for(int i = 0; i < t1.data.size(); i++) {
+	for (int i = 0; i < t1.data.size(); i++) {
 		t1.data.at(i) += t2.data.at(i);
 	}
 	return t1;
 }
 Tensor operator-(Tensor t1, Tensor& t2) {
-	if(t1.dim != t2.dim) {
+	if (t1.dim != t2.dim) {
 		throw runtime_error("Tensor dimensions are not equal");
 	}
-	for(int i = 0; i < t1.data.size(); i++) {
+	for (int i = 0; i < t1.data.size(); i++) {
 		t1.data.at(i) -= t2.data.at(i);
 	}
 	return t1;
 }
 Tensor operator*(double num, Tensor t) {
-	for(int i = 0; i < t.data.size(); i++) {
+	for (int i = 0; i < t.data.size(); i++) {
 		t.data.at(i) *= num;
 	}
 	return t;
 }
+Tensor operator/(Tensor t, double num) {
+	for (int i = 0; i < t.data.size(); i++) {
+		t.data.at(i) /= num;
+	}
+	return t;
+}
 Tensor operator-(double num, Tensor t) {
-	for(int i = 0; i < t.data.size(); i++) {
+	for (int i = 0; i < t.data.size(); i++) {
 		t.data.at(i) = num - t.data.at(i);
 	}
 	return t;
 }
 Tensor operator+(double num, Tensor t) {
-	for(int i = 0; i < t.data.size(); i++) {
+	for (int i = 0; i < t.data.size(); i++) {
 		t.data.at(i) += num;
 	}
 	return t;
 }
 Tensor operator-(Tensor t, double num) {
-	for(int i = 0; i < t.data.size(); i++) {
+	for (int i = 0; i < t.data.size(); i++) {
 		t.data.at(i) -= num;
 	}
 	return t;
 }
 Tensor operator+(Tensor t, double num) {
-	for(int i = 0; i < t.data.size(); i++) {
+	for (int i = 0; i < t.data.size(); i++) {
 		t.data.at(i) += num;
 	}
 	return t;
 }
 Tensor array2Tensor(double* array, unsigned int size) {
-	Tensor t = EmptyTensor({size});
-	for(unsigned int i = 0; i < size; i++) {
+	Tensor t = EmptyTensor({ size });
+	for (unsigned int i = 0; i < size; i++) {
 		t.data.at(i) = array[i];
 	}
+	return t;
+}
+Tensor& Tensor::operator-=(Tensor const& t) {
+	for (unsigned int i = 0; i < t.data.size(); i++)
+		this->data.at(i) -= t.data.at(i);
+	return *this;
+}
+Tensor& Tensor::operator+=(Tensor const& t) {
+	for (unsigned int i = 0; i < t.data.size(); i++)
+		this->data.at(i) += t.data.at(i);
+	return *this;
+}
+Tensor abs(Tensor t) {
+	for (unsigned int i = 0; i < t.data.size(); i++)
+		if (t.data.at(i) < 0)
+			t.data.at(i) *= -1;
 	return t;
 }

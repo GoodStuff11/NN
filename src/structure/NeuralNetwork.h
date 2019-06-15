@@ -9,6 +9,8 @@
 class NeuralNetwork {
 private:
 	double training_rate;
+	unsigned batch_size;
+
 	Tensor(*loss_function)(Tensor, Tensor);
 	Tensor* calculate_nodes(Tensor input);
 	void set_loss_function(std::string function);
@@ -22,7 +24,7 @@ public:
 	virtual ~NeuralNetwork();
 	void add_layer(Layer* new_layer);
 	void build(std::string function);
-	void fit(DataFrame& train_data, DataFrame& train_labels, unsigned int epochs);
+	void fit(DataFrame& train_data, DataFrame& train_labels, unsigned int epochs,unsigned int batch_size);
 };
 
 #endif /* NEURALNETWORK_H_ */

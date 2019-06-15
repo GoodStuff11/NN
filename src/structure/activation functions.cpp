@@ -99,7 +99,11 @@ namespace af {
 		return tensor_product(sigmoid(v), 1 - v);
 	}
 	Tensor none_derivative(Tensor v) {
-		return EmptyTensor({v.get_dim(0),v.get_dim(0)});
+		// identity function
+		Tensor t = EmptyTensor({v.get_dim(0),v.get_dim(0)});
+		for (unsigned int i = 0; i < v.get_dim(0); i++)
+			t({ i,i }) = 1;
+		return t;
 	}
 
 }

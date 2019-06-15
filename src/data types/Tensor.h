@@ -43,8 +43,8 @@ public:
 		reversed = 1;
 		data = {};
 	}
-	Tensor(std::initializer_list<double> l): data(l) {
-		dim = {(unsigned int)l.size()};
+	Tensor(std::initializer_list<double> l) : data(l) {
+		dim = { (unsigned int)l.size() };
 		tensor_degree = 1;
 		reversed = 1;
 	}
@@ -60,17 +60,22 @@ public:
 	friend Tensor operator+(Tensor t1, Tensor& t2);
 	friend Tensor operator-(Tensor t1, Tensor& t2);
 
+	Tensor& operator-=(Tensor const& t);
+	Tensor& operator+=(Tensor const& t);
+
 	friend Tensor operator-(double num, Tensor t);
 	friend Tensor operator+(double num, Tensor t);
 	friend Tensor operator-(Tensor t, double num);
 	friend Tensor operator+(Tensor t, double num);
 	friend Tensor operator*(double num, Tensor t);
+	friend Tensor operator/(Tensor t, double num);
 	friend Tensor array2Tensor(double* array, unsigned int size);
 
 	friend Tensor EmptyTensor(std::vector<unsigned int>dim);
 	friend Tensor dot(Tensor t1, Tensor t2);
 	friend Tensor tensor_product(Tensor& t1, Tensor& t2);
 	friend std::ostream& operator<<(std::ostream& os, Tensor t);
+	friend Tensor abs(Tensor t);
 	Tensor& reshape(std::vector<unsigned int> dim);
 
 };

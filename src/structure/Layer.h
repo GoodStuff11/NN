@@ -23,7 +23,8 @@ protected:
 	virtual Tensor call(Tensor input) { return Tensor(); };
 
 	Tensor calculate_s(Tensor error, Tensor nodes) const;
-	virtual Tensor update(Tensor s, Tensor nodes) { return Tensor(); }
+	virtual void update(Tensor &weights, Tensor &biases, unsigned int batch_size) { }
+	virtual Tensor update_delta(Tensor& s, Tensor& nodes, Tensor& weight_delta, Tensor& biases_delta) { return Tensor(); }
 	virtual void build(Layer* previous_layer) {}
 	
 	
@@ -38,7 +39,8 @@ public:
 	dense(unsigned int output, std::string function);
 	Tensor call(Tensor input);
 
-	Tensor update(Tensor s, Tensor nodes);
+	virtual void update(Tensor& weights, Tensor& biases, unsigned int batch_size);
+	virtual Tensor update_delta(Tensor& s, Tensor& nodes, Tensor& weight_delta, Tensor& biases_delta);
 	void build(Layer* previous_layer);
 
 	virtual Tensor get_weights() { return weights; }
@@ -55,7 +57,10 @@ public:
 	}
 	std::string name() { return "input"; }
 	Tensor call(Tensor input) { return Tensor(); }
-	Tensor update(Tensor s, Tensor nodes) { return Tensor(); }
+
+	virtual void update(Tensor& weights, Tensor& biases, unsigned int batch_size) {};
+	virtual Tensor update_delta(Tensor& s, Tensor& nodes, Tensor& weight_delta, Tensor& biases_delta) { return Tensor(); }
+
 	void build(Layer* previous_layer) {}
 
 	virtual Tensor get_weights() { return Tensor(); }
@@ -71,7 +76,8 @@ public:
 	std::string name() { return "activation"; }
 	Tensor call(Tensor input);
 
-	Tensor update(Tensor s, Tensor nodes) { return s; }
+	virtual void update(Tensor& weights, Tensor& biases, unsigned int batch_size) { }
+	virtual Tensor update_delta(Tensor& s, Tensor& nodes, Tensor& weight_delta, Tensor& biases_delta) { return s; }
 	void build(Layer* previous_layer) {}
 
 	virtual Tensor get_weights() { return Tensor(); }

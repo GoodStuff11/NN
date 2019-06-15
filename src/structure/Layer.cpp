@@ -57,12 +57,12 @@ void dense::build(Layer* previous_layer) {
 		other_nodes = nodes;
 	weights = EmptyTensor({nodes * other_nodes});
 	for (unsigned int i = 0; i < weights.get_dim(0); i++)
-		weights({i}) = ((double) rand() / (RAND_MAX));
+		weights({i}) = 2*((double) rand() / (RAND_MAX))-1;
 	weights.reshape({nodes, other_nodes});
 
 	biases = EmptyTensor({nodes});
 	for(unsigned int i = 0; i < biases.get_dim(0); i++)
-		biases({i}) = (( double) rand() / (RAND_MAX));
+		biases({i}) = 2*(( double) rand() / (RAND_MAX))-1;
 }
 Tensor dense::call(Tensor input) {
 	return activation_function(dot(weights, input) + biases);
@@ -70,11 +70,14 @@ Tensor dense::call(Tensor input) {
 Tensor Layer::calculate_s(Tensor error, Tensor nodes) const {
 	return dot(error, activation_function_derivative(nodes));
 }
-Tensor dense::update(Tensor s, Tensor nodes) {
-	Tensor new_s = dot(s, dot(weights, activation_function_derivative(nodes)));
-	weights = weights - training_rate * tensor_product(s, nodes);
-	biases = biases - training_rate * s;
-	return new_s;
+Tensor dense::update_delta(Tensor &s, Tensor &nodes, Tensor &weight_delta, Tensor &biases_delta) {
+	weight_delta += tensor_product(s, nodes);
+	biases_delta += s;
+	return dot(s, dot(weights, activation_function_derivative(nodes)));
+}
+void dense::update(Tensor& weight_delta, Tensor& biases_delta, unsigned int batch_size) {
+	weights -= training_rate * weight_delta / batch_size;
+	biases -= training_rate * biases_delta / batch_size;
 }
 activation::activation(std::string function) {
 	decodeActivationFunction(function);
